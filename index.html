@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>灵境·HTML工坊 | 实时预览与短链分享系统</title>
+    <title>灵境·HTML工坊 | 短链+长链一键生成</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,6 @@
             color: #eef2ff;
         }
 
-        /* 顶部工具栏 */
         .top-bar {
             background: #11131f;
             border-bottom: 1px solid #262935;
@@ -78,6 +77,14 @@
             transform: translateY(-1px);
         }
 
+        button.long-btn {
+            background: #475569;
+        }
+
+        button.long-btn:hover {
+            background: #5a6b8a;
+        }
+
         button:hover {
             background: #32374a;
             transform: translateY(-1px);
@@ -93,6 +100,8 @@
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
+            flex: 1;
+            min-width: 200px;
         }
 
         .share-preview input {
@@ -101,12 +110,12 @@
             padding: 5px 10px;
             border-radius: 30px;
             color: #b9c3db;
-            width: 260px;
+            flex: 1;
+            min-width: 150px;
             font-size: 0.7rem;
             outline: none;
         }
 
-        /* 主体：左右分屏（编辑器 + 实时预览） */
         .main-workspace {
             display: flex;
             flex: 1;
@@ -216,17 +225,18 @@
 <div class="top-bar">
     <div class="logo">
         ◤ 灵境·HTML工坊 ◢
-        <span style="font-size: 0.6rem; background: #252a3a; padding: 2px 8px; border-radius: 20px;">实时预览+短链分享</span>
+        <span style="font-size: 0.6rem; background: #252a3a; padding: 2px 8px; border-radius: 20px;">长链+短链</span>
     </div>
     <div class="action-buttons">
         <button id="runBtn" class="primary">▶ 刷新预览</button>
-        <button id="shareBtn">🔗 生成短链接</button>
-        <button id="copyLinkBtn">📋 复制链接</button>
-        <button id="resetDemoBtn">📄 加载研究模板</button>
+        <button id="shortenBtn" style="background:#10b981;">🔗 生成短链接</button>
+        <button id="longBtn" class="long-btn">📝 生成长链接</button>
+        <button id="copyBtn">📋 复制链接</button>
+        <button id="resetDemoBtn">📄 加载模板</button>
     </div>
     <div class="share-preview">
-        <span>🔗 分享链接↓</span>
-        <input type="text" id="shareLinkInput" readonly placeholder="点击「生成短链接」自动生成" size="30">
+        <span>🔗 链接↓</span>
+        <input type="text" id="linkInput" readonly placeholder="点击「生成长链接」或「生成短链接」">
     </div>
 </div>
 
@@ -236,7 +246,7 @@
             <span>✏️ HTML 源代码编辑器</span>
             <span>实时修改 + 右侧实时预览</span>
         </div>
-        <textarea id="htmlCode" placeholder="编写您的 HTML/CSS/JS 代码……"></textarea>
+        <textarea id="htmlCode"></textarea>
     </div>
     <div class="preview-panel">
         <div class="panel-header">
@@ -247,21 +257,21 @@
     </div>
 </div>
 <div class="status-bar">
-    <span>✨ 左侧编辑代码 → 点击「生成短链接」→ 获得短链 → 复制分享给任何人打开即看</span>
-    <span>📌 支持 HTML/CSS/JS | 内置研究计划书模板</span>
+    <span>✨ 编辑代码 → 点击「生成长链接」获得完整链接 → 点击「生成短链接」获得短链接</span>
+    <span>📌 长链接永久有效 | 短链接方便分享</span>
 </div>
 
 <script>
-    // ------------------- DOM 元素 -------------------
+    // DOM 元素
     const textarea = document.getElementById('htmlCode');
     const previewFrame = document.getElementById('previewFrame');
     const runBtn = document.getElementById('runBtn');
-    const shareBtn = document.getElementById('shareBtn');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const shortenBtn = document.getElementById('shortenBtn');
+    const longBtn = document.getElementById('longBtn');
+    const copyBtn = document.getElementById('copyBtn');
     const resetDemoBtn = document.getElementById('resetDemoBtn');
-    const shareLinkInput = document.getElementById('shareLinkInput');
+    const linkInput = document.getElementById('linkInput');
 
-    // ------------------- 辅助函数：提示消息 -------------------
     let toastTimeout = null;
     function showMessage(msg, isError = false) {
         let toast = document.querySelector('.toast-msg');
@@ -276,19 +286,14 @@
         if (toastTimeout) clearTimeout(toastTimeout);
         toastTimeout = setTimeout(() => {
             toast.style.opacity = '0';
-        }, 2800);
+        }, 3000);
     }
 
-    // ------------------- 核心预览函数 -------------------
+    // 更新预览
     function updatePreview() {
         let code = textarea.value;
         if (!code.trim()) {
-            // 友好的默认空白页面（带提示）
-            code = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>灵境工坊</title><style>body{font-family:system-ui;display:flex;justify-content:center;align-items:center;height:100vh;background:#f4f6fa;margin:0;} .card{text-align:center;background:white;padding:2rem;border-radius:32px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}</style></head>
-<body><div class="card"><h1>✨ 灵境·HTML工坊</h1><p>在左侧编辑器中编写 HTML/CSS/JS，点击「刷新预览」或直接生成短链接分享。</p><button onclick="alert('交互测试成功')">点击测试</button></div></body>
-</html>`;
+            code = getDefaultTemplate();
             textarea.value = code;
         }
         const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
@@ -297,7 +302,70 @@
         iframeDoc.close();
     }
 
-    // ------------------- 基于短链接服务(TinyURL) + 降级方案 -------------------
+    // 默认模板
+    function getDefaultTemplate() {
+        return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>研究计划书：企业ESG表现与债务融资成本</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f2f4f8;
+            font-family: system-ui, sans-serif;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+        }
+        h1 { font-size: 1.8rem; color: #0a2942; margin-bottom: 0.5rem; }
+        .sub { color: #5b6e8c; border-left: 3px solid #9aaebf; padding-left: 1rem; margin: 0.5rem 0 1.5rem 0; }
+        .section { margin-bottom: 2rem; }
+        .section-title { font-size: 1.3rem; font-weight: 600; color: #1f3b4c; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 1rem; }
+        .card { background: #f9fafc; border-left: 4px solid #6c8fb3; padding: 1rem 1.5rem; border-radius: 16px; margin-bottom: 1rem; }
+        .hypothesis { background: #fefaf5; border-left: 4px solid #c9a87b; padding: 1rem 1.5rem; border-radius: 14px; margin-bottom: 1rem; }
+        .footer { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eef2f8; color: #6f8eae; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ESG表现与债务融资成本：<br>基于信息不对称缓解视角的实证研究</h1>
+    <div class="sub">理论拓展 · 因果识别 · 面板数据分析</div>
+    
+    <div class="section">
+        <div class="section-title">一、研究动机与理论贡献</div>
+        <div class="card"><strong>现实背景：</strong>双碳目标与ESG投资浪潮下，绿色金融体系快速发展。</div>
+        <div class="card"><strong>文献缺口：</strong>现有文献对债务融资成本影响机制尤其是"信息不对称缓解"渠道缺乏深入检验。</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">二、研究假设</div>
+        <div class="hypothesis"><strong>H1：</strong>ESG表现越好的企业，其债务融资成本越低。</div>
+        <div class="hypothesis"><strong>H2：</strong>ESG表现通过缓解信息不对称来降低债务融资成本。</div>
+        <div class="hypothesis"><strong>H3：</strong>降低效应在民营企业、高融资约束企业中更显著。</div>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">三、实证设计</div>
+        <div class="card"><strong>数据来源：</strong>CSMAR + Wind，2015-2024年A股上市公司</div>
+        <div class="card"><strong>核心变量：</strong>华证ESG评分、利息支出/平均有息负债</div>
+        <div class="card"><strong>计量方法：</strong>面板固定效应、中介效应模型、PSM-DID</div>
+    </div>
+    
+    <div class="footer">
+        数据量约2.2万观测值 | Stata/Python均可完成
+    </div>
+</div>
+</body>
+</html>`;
+    }
+
     // 生成长链接（基于Hash存储完整代码）
     function generateLongLink() {
         const code = textarea.value;
@@ -306,218 +374,154 @@
             return null;
         }
         const encoded = encodeURIComponent(code);
-        const baseUrl = window.location.href.split('#')[0];
+        const baseUrl = window.location.href.split('#')[0].split('?')[0];
         return `${baseUrl}#code=${encoded}`;
     }
 
-    // 调用免费短链接服务 (TinyURL 主方案, 备选 is.gd)
-    async function shortenUrlWithFallback(longUrl) {
-        // 主方案：TinyURL (速度快，支持跨域)
+    // 调用缩我(suowo.cn) API 生成短链接
+    async function shortenWithSuowo(longUrl) {
         try {
-            const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+            const response = await fetch(`https://api.suowo.cn/v1/api/shorten`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    url: longUrl
+                })
+            });
+            
             if (response.ok) {
-                const short = await response.text();
-                if (short && short.startsWith('http')) return short;
+                const data = await response.json();
+                if (data && data.code === 200 && data.data && data.data.short_url) {
+                    return data.data.short_url;
+                }
             }
-        } catch (e) { console.log("TinyURL 失败", e); }
-        
-        // 备用方案：is.gd
+        } catch (e) {
+            console.log("缩我API失败:", e);
+        }
+        return null;
+    }
+
+    // 备用方案：使用 TinyURL
+    async function shortenWithTinyURL(longUrl) {
         try {
-            const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`);
+            const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
             if (res.ok) {
                 const short = await res.text();
                 if (short && short.startsWith('http')) return short;
             }
-        } catch (e) { console.log("is.gd 失败", e); }
-        
-        return null; // 短链服务都失败
+        } catch (e) {}
+        return null;
     }
 
-    // 主逻辑：生成短链接并填入输入框
+    // 生成短链接
     async function generateShortLink() {
         const longLink = generateLongLink();
         if (!longLink) return;
         
-        showMessage("⏳ 正在生成短链接，请稍候...", false);
-        const shortLink = await shortenUrlWithFallback(longLink);
+        showMessage("⏳ 正在生成短链接...", false);
+        
+        let shortLink = await shortenWithSuowo(longLink);
+        if (!shortLink) {
+            shortLink = await shortenWithTinyURL(longLink);
+        }
         
         if (shortLink) {
-            shareLinkInput.value = shortLink;
+            linkInput.value = shortLink;
             showMessage("✅ 短链接生成成功！点击「复制链接」即可分享", false);
-            // 同时也把当前地址栏更新为长链 (便于直接复制地址栏也可用)
-            if (!window.location.href.includes('#code=')) {
-                history.pushState(null, '', longLink);
-            }
+            try {
+                await navigator.clipboard.writeText(shortLink);
+                showMessage("✅ 短链接已自动复制到剪贴板！", false);
+            } catch(e) {}
         } else {
-            // 如果短链接服务暂时不可用，则退而使用完整长链接（用户仍可分享，只是长一点）
-            shareLinkInput.value = longLink;
-            showMessage("⚠️ 短链接服务暂时繁忙，已生成长链接（仍可正常分享）", false);
-            if (!window.location.href.includes('#code=')) {
-                history.pushState(null, '', longLink);
-            }
+            linkInput.value = longLink;
+            showMessage("⚠️ 短链接服务暂时不可用，已生成长链接", false);
+        }
+    }
+
+    // 生成长链接并显示
+    function generateAndShowLongLink() {
+        const longLink = generateLongLink();
+        if (!longLink) return;
+        
+        linkInput.value = longLink;
+        showMessage("✅ 长链接已生成！点击「复制链接」即可分享", false);
+        
+        // 更新地址栏
+        if (!window.location.href.includes('#code=')) {
+            history.pushState(null, '', longLink);
         }
     }
 
     // 复制链接
     async function copyShareLink() {
-        const link = shareLinkInput.value;
-        if (!link || link === "点击「生成短链接」自动生成") {
-            showMessage("请先点击「生成短链接」", true);
+        const link = linkInput.value;
+        if (!link || link === "") {
+            showMessage("请先点击「生成长链接」或「生成短链接」", true);
             return;
         }
         try {
             await navigator.clipboard.writeText(link);
-            showMessage("📋 链接已复制到剪贴板！可粘贴至微信/邮件/文档", false);
+            showMessage("📋 链接已复制到剪贴板！可粘贴分享", false);
         } catch (err) {
             showMessage("手动复制链接即可", true);
         }
     }
 
-    // ------------------- 加载内置的研究计划书模板（绝对符合学术场景，带有预览测试）-------------------
-    function loadResearchTemplate() {
-        const researchHtml = `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>研究计划书：企业ESG表现与债务融资成本</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #f2f4f8;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding: 2rem 1rem;
-            line-height: 1.5;
-        }
-        .paper {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-            overflow: hidden;
-            padding: 2rem 2.2rem;
-        }
-        h1 { font-size: 1.9rem; font-weight: 700; color: #0a2b3e; margin-bottom: 0.5rem; letter-spacing: -0.3px; }
-        .badge { display: inline-block; background: #eef2fa; color: #1f6392; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
-        .subhead { border-left: 3px solid #8aaec0; padding-left: 1rem; margin: 0.8rem 0 1.5rem 0; color: #2c4b6e; }
-        .section { margin-bottom: 2rem; }
-        .section-title { font-size: 1.4rem; font-weight: 600; border-bottom: 2px solid #e9edf2; padding-bottom: 0.3rem; margin-bottom: 1rem; color: #1e3b4c; }
-        .card { background: #f9fafc; border-left: 5px solid #5f8bb3; padding: 1rem 1.5rem; border-radius: 18px; margin-bottom: 1rem; }
-        .hypo-card { background: #fef8ed; border-left: 5px solid #c2a15b; padding: 1rem 1.5rem; border-radius: 18px; margin-bottom: 1rem; }
-        .code-block { background: #f1f5f9; padding: 0.8rem 1.2rem; border-radius: 16px; font-family: monospace; font-size: 0.8rem; margin: 0.8rem 0; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        th { background: #f0f4fa; }
-        .footer-note { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.7rem; color: #6a7f9b; }
-        @media (max-width: 650px) { .paper { padding: 1.2rem; } h1 { font-size: 1.4rem; } }
-    </style>
-</head>
-<body>
-<div class="paper">
-    <span class="badge">公司金融 · 毕业论文/研究计划</span>
-    <h1>ESG表现与债务融资成本：<br>基于信息不对称缓解视角的实证研究</h1>
-    <div class="subhead">理论拓展 + 因果识别 + 面板数据实证 | 拟解决企业融资困境关键机制</div>
-    
-    <div class="section">
-        <div class="section-title">一、Why：研究动机与理论贡献</div>
-        <div class="card"><strong>🌍 现实背景：</strong> 双碳目标与ESG投资浪潮下，我国绿色金融体系快速发展，银行与债券市场愈发重视企业社会责任表现。</div>
-        <div class="card"><strong>📚 文献缺口：</strong> 现有文献多集中于ESG与权益资本成本，对债务融资成本影响机制尤其是“信息不对称缓解”这一独立渠道缺乏深入检验。</div>
-        <div class="card"><strong>🎯 增量贡献：</strong> 融合信号理论与利益相关者理论，检验ESG通过提高信息透明度显著降低债务融资成本的新机制。</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">二、What：核心研究假设</div>
-        <div class="hypo-card"><strong>H1（主效应）</strong>：ESG表现越好的企业，其债务融资成本越低。</div>
-        <div class="hypo-card"><strong>H2（中介机制）</strong>：ESG表现通过缓解信息不对称（分析师预测分歧度/盈余平滑度）降低债务融资成本。</div>
-        <div class="hypo-card"><strong>H3（异质性）</strong>：ESG降低债务融资成本效应在民营企业、高融资约束企业中更显著。</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">三、How：实证策略与数据</div>
-        <table>
-            <thead><tr><th>变量类型</th><th>核心指标</th><th>数据来源</th></tr></thead>
-            <tbody>
-                <tr><td>被解释变量</td><td>利息支出/平均有息负债</td><td>CSMAR</td></tr>
-                <tr><td>解释变量</td><td>华证ESG综合评分</td><td>Wind/商道融绿</td></tr>
-                <tr><td>中介变量</td><td>分析师预测分歧度 / 盈余平滑度</td><td>CSMAR</td></tr>
-                <tr><td>控制变量</td><td>规模、资产负债率、ROA、托宾Q、产权性质等</td><td>CSMAR</td></tr>
-            </tbody>
-        </table>
-        <div class="code-block">
-            <strong>基准模型（面板固定效应）</strong><br>
-            CostDebt_{i,t} = α + β₁·ESG_{i,t-1} + γ·Controls_{i,t-1} + μ_i + λ_t + ε_{i,t}<br>
-            <strong>中介效应（三步法）</strong>：检验信息不对称的中介比例，Sobel检验+ Bootstrap
-        </div>
-        <div class="card"><strong>📊 样本区间：</strong> 2015-2024年A股上市公司，剔除金融/ST/缺失值，最终约2.2万+公司-年度观测。</div>
-        <div class="card"><strong>🛡️ 内生性处理：</strong> 滞后一期、行业均值IV、PSM-DID、安慰剂检验，确保因果稳健。</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">四、预期成果与参考文献</div>
-        <div class="code-block">✨ 预期ESG评分每提高一个标准差，债务融资成本下降约5%-8%，且信息不对称解释力占30%以上。</div>
-        <div style="font-size: 0.8rem; margin-top: 0.5rem;">📄 核心文献：Goss & Roberts (2011), El Ghoul et al.(2011), Stellner et al.(2015), 吴非等(2021,管理世界)等。</div>
-    </div>
-    <div class="footer-note">
-        ⚡ 本页面由「灵境·HTML工坊」生成短链分享，实时预览可用 | 数据支持 CSMAR / Wind
-    </div>
-</div>
-</body>
-</html>`;
-        textarea.value = researchHtml;
+    // 加载模板
+    function loadTemplate() {
+        const template = getDefaultTemplate();
+        textarea.value = template;
         updatePreview();
-        showMessage("已加载「ESG与债务融资成本」研究计划书模板，可自由修改并生成短链接", false);
-        shareLinkInput.value = "";
+        showMessage("已加载研究计划书模板，可自由修改", false);
+        linkInput.value = "";
     }
 
-    // ------------------- 从URL的Hash恢复代码（支持分享的长链加载）--------------------
+    // 从Hash加载代码
     function loadCodeFromHash() {
         const hash = window.location.hash.substring(1);
         if (hash && hash.startsWith('code=')) {
             try {
-                let encodedCode = hash.substring(5);
-                let decoded = decodeURIComponent(encodedCode);
-                if (decoded && typeof decoded === 'string') {
+                let decoded = decodeURIComponent(hash.substring(5));
+                if (decoded) {
                     textarea.value = decoded;
                     updatePreview();
-                    showMessage("📎 已从分享链接加载内容，可编辑或重新生成新链接", false);
+                    showMessage("已从分享链接加载内容", false);
                     return true;
                 }
-            } catch (e) { console.warn(e); }
+            } catch (e) {}
         }
         return false;
     }
 
-    // ------------------- 事件绑定与初始化 -------------------
+    // 事件绑定
     function bindEvents() {
         runBtn.addEventListener('click', () => {
             updatePreview();
-            showMessage("预览已刷新 ✓", false);
+            showMessage("预览已刷新", false);
         });
-        shareBtn.addEventListener('click', generateShortLink);
-        copyLinkBtn.addEventListener('click', copyShareLink);
-        resetDemoBtn.addEventListener('click', loadResearchTemplate);
-        // Ctrl+Enter 快捷键刷新预览
+        shortenBtn.addEventListener('click', generateShortLink);
+        longBtn.addEventListener('click', generateAndShowLongLink);
+        copyBtn.addEventListener('click', copyShareLink);
+        resetDemoBtn.addEventListener('click', loadTemplate);
+        
         textarea.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 updatePreview();
-                showMessage("快捷键刷新预览", false);
             }
         });
-        // 如果用户修改文本，可以稍微提示，但不强制自动刷新（由用户主动刷新）
     }
 
+    // 初始化
     function init() {
         bindEvents();
-        const loadedFromHash = loadCodeFromHash();
-        if (!loadedFromHash) {
-            // 默认加载研究模板，让用户立刻看到专业内容
-            loadResearchTemplate();
-        } else {
-            // 已经加载了hash内容，确保预览正常
-            updatePreview();
+        const loaded = loadCodeFromHash();
+        if (!loaded) {
+            loadTemplate();
         }
+        updatePreview();
     }
     
     init();
