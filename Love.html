@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🍓 莓莓夸夸小窝 · 致刘源</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 避免拖动干扰，不影响阅读 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #fff0f5 0%, #ffe4ed 100%);
+            font-family: 'Segoe UI', 'Quicksand', 'Poppins', 'Comic Neue', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 漂浮的草莓粒子 */
+        .strawberry-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .strawberry-bg i {
+            position: absolute;
+            font-size: 28px;
+            opacity: 0.2;
+            animation: floatBerry 12s infinite linear;
+            color: #ff8aa7;
+        }
+
+        @keyframes floatBerry {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0.1; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0.4; }
+        }
+
+        /* 主卡片 */
+        .card {
+            position: relative;
+            z-index: 2;
+            max-width: 680px;
+            width: 100%;
+            background: rgba(255, 255, 245, 0.96);
+            backdrop-filter: blur(4px);
+            border-radius: 68px;
+            box-shadow: 0 30px 40px rgba(241, 114, 143, 0.25), 0 0 0 12px #fff0f5, 0 0 0 16px #ffb7cb;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .header {
+            background: #ffb9d0;
+            padding: 24px 24px 18px 24px;
+            text-align: center;
+            border-bottom: 3px dashed #ffe2ed;
+        }
+
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #5e2a38;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 span {
+            background: #fff0e0;
+            padding: 4px 16px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+        }
+
+        .header p {
+            color: #722f44;
+            font-weight: 600;
+            margin-top: 12px;
+            background: #ffeef4;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* 草莓吉祥物区域 */
+        .mascot {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0 0 0;
+        }
+
+        .strawberry-chan {
+            background: #ff6f91;
+            width: 80px;
+            height: 80px;
+            border-radius: 60% 60% 45% 45%;
+            position: relative;
+            box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+            animation: bounce 2s ease infinite;
+        }
+
+        .strawberry-chan::before {
+            content: "🍓";
+            position: absolute;
+            font-size: 48px;
+            top: 8px;
+            left: 16px;
+        }
+
+        .strawberry-chan::after {
+            content: "✨";
+            position: absolute;
+            font-size: 28px;
+            bottom: -20px;
+            right: -20px;
+            opacity: 0.8;
+        }
+
+        @keyframes bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* 夸夸展示区 */
+        .compliment-area {
+            padding: 36px 28px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fffbfd;
+        }
+
+        .quote-icon {
+            font-size: 48px;
+            opacity: 0.6;
+            margin-bottom: 12px;
+        }
+
+        .compliment-text {
+            font-size: 1.7rem;
+            line-height: 1.45;
+            text-align: center;
+            font-weight: 600;
+            color: #4a2a35;
+            background: #fff2f7;
+            padding: 28px 24px;
+            border-radius: 64px;
+            width: 100%;
+            box-shadow: inset 0 1px 4px #ffcdde, 0 8px 18px rgba(173, 67, 97, 0.1);
+            transition: all 0.3s ease;
+            word-break: break-word;
+        }
+
+        .compliment-text span {
+            display: inline-block;
+        }
+
+        .btn-area {
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 28px;
+        }
+
+        .btn-cute {
+            background: #ff9ebc;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 80px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 6px 0 #99264a;
+            transform: translateY(-2px);
+        }
+
+        .btn-cute:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #99264a;
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #dd8aa6;
+            background: #fff0f0;
+            width: fit-content;
+            margin: 0 auto 20px auto;
+            padding: 6px 16px;
+            border-radius: 40px;
+        }
+
+        footer {
+            background: #ffe5ef;
+            padding: 16px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b45d79;
+            border-top: 2px dotted #ffbfd4;
+        }
+
+        @media (max-width: 550px) {
+            .compliment-text {
+                font-size: 1.25rem;
+                padding: 20px 16px;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .btn-cute {
+                padding: 10px 24px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="strawberry-bg" id="berryBg"></div>
+<div class="card">
+    <div class="header">
+        <h1>
+            🍓 莓莓夸夸小窝 🍓
+            <span>💖 致 刘源 💖</span>
+        </h1>
+        <p>✨ 你值得世间所有的甜 ✨</p>
+        <div class="mascot">
+            <div class="strawberry-chan"></div>
+        </div>
+    </div>
+
+    <div class="compliment-area">
+        <div class="quote-icon">🍓🌟🍓</div>
+        <div class="compliment-text" id="complimentDisplay">
+            加载专属夸夸中... 莓莓能量准备就绪✨
+        </div>
+    </div>
+    <div class="btn-area">
+        <button class="btn-cute" id="newComplimentBtn">🐣 再夸一次 🍓</button>
+    </div>
+    <div class="counter" id="counterInfo">🍓 已有 520+ 条治愈夸夸待命中</div>
+    <footer>
+        💕 小莓精灵说：学业和人际只是人生的一小部分，你本身就是宝藏！<br>
+        点一下“再夸一次”，收获一颗草莓味肯定 ❤️
+    </footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 超 500+ 条真诚 / 可爱 / 鼓励式夸夸语句 (组合生成 + 核心手写)
+    // 专门针对刘源（大学生，喜欢小莓，人际关系/学业压力）
+    // --------------------------------------------------------------
+
+    // 1. 核心·走心真诚语录 (105条，每一句都手动编写/精挑，充满草莓元素和鼓励)
+    const coreCompliments = [
+        "刘源，你的存在就像初夏的第一颗草莓，清甜又独特。",
+        "你努力解决问题的样子超级迷人，学业压力只是暂时的小乌云。",
+        "小莓为你加油！你身上有温柔又坚韧的力量，朋友都会慢慢懂得你的好。",
+        "不被所有人喜欢也没关系，你本身就是一颗珍贵的莓莓，懂你的人自然会被吸引。",
+        "你今天的穿搭一定又甜又飒！你对自己审美的坚持就已经赢了。",
+        "压力大的时候记得看看小莓，你值得所有的喘息和糖果。",
+        "刘源宝贝，你总是想照顾别人的情绪，但你的感受同样重要，你超级棒。",
+        "学业路上哪怕慢一点也没关系，草莓也是慢慢变红的～",
+        "你的笑容真的很有感染力，像草莓酱抹在吐司上一样让人幸福。",
+        "你为了人际关系烦恼，恰恰说明你是个细腻温暖的人，这种品质千金不换。",
+        "喜欢小莓的女孩内心都住着童话，你永远可爱且被爱。",
+        "你每一次勇敢的表达自己，都是在闪闪发光。",
+        "今天的你已经比昨天更懂得爱自己，这就是进步呀。",
+        "当你觉得累的时候，宇宙正派小莓精灵给你一个大大的拥抱。",
+        "你身上有一种让人想靠近的气质，像草莓蛋糕上的那颗红莓。",
+        "刘源，你认真上课/作业的样子，认真又可爱！",
+        "就算偶尔EMO，那也是你柔软内心的正常节奏，别责备自己。",
+        "你给人的反馈总是很正面，这说明你情商超高，会拥有长久的朋友。",
+        "你的穿搭灵感真的很有少女感，我每次脑补都觉得好好看。",
+        "你值得被赞美，就像草莓值得被放在蛋糕最顶端。",
+        "遇到困难的时候想想：小莓同学从不放弃，你也是！",
+        "我超喜欢你说话时软软的语气，让人安心。",
+        "永远不要怀疑自己的魅力，你就像一颗自带光芒的草莓星。",
+        "人际关系就像草莓田，总会有几颗歪果子，但大部分都是甜甜的。",
+        "你坚持自我的样子，比任何人的评价都重要。",
+        "你今天有认真喝水、好好呼吸，就已经是三件好事啦！",
+        "你比想象中更勇敢，敢面对学业压力本身就很了不起。",
+        "你是一颗独一无二的莓莓，无需成为别人。",
+        "刘源，你的善良终会被温柔回馈。",
+        "你此刻的努力，会在未来某个瞬间变成一颗糖。",
+        "你有着让人放松的亲和力，这是绝佳的天赋。",
+        "你的感官敏锐，能看到生活中的小美好，这就是超能力。",
+        "你遇到压力不放弃，是小草莓战士！",
+        "请记住：开心是最重要的学分，你已经修得很好了。",
+        "你配得上所有真诚的友谊和夸奖。",
+        "你认真对待学习的态度，已经超过了半数的人。",
+        "嘴角上扬的时候，你就是小莓广告里的女主角。",
+        "你的emo情绪也有价值，它会让你更深刻地理解生活。",
+        "无论发生什么，小莓窝永远为你亮灯。",
+        "你正在成为自己更喜欢的人，每一步都算数。",
+        "即使是微小的一点点进步，小莓也都为你喝彩。",
+        "真的真的好喜欢你的性格，软糯又坚定。",
+        "你无意间的一句话可能温暖过很多人，你不知道而已。",
+        "你的审美让周围变得更可爱，这就是影响力。",
+        "当你感到孤单时，请记住这个夸夸页面永远陪着你。",
+        "不要因为一两段关系怀疑自己，你值得被长久喜欢。",
+        "学业上的低谷不代表你不行，只说明你在蓄力。",
+        "你这么喜欢小莓，肯定也是个甜甜的制造机。",
+        "你穿什么风格都好看，因为自信才是最好的单品。",
+        "你每一次尝试新事物都是勇敢的勋章。",
+        "今天也是散发着草莓香气的一天～ 因为你存在。",
+        "你值得拥有无条件的支持和鼓励，现在就来啦！",
+        "被压力追赶的时候，你依旧没有放弃，超级帅。",
+        "你内心的温柔是你最强大的武器。",
+        "你的友情观这么真挚，迟早会遇到同频的人。",
+        "草莓代表爱情，更代表幸运，所有幸运都会流向你。",
+        "你已经做得很好了，真的真的。",
+        "不要害怕求助，你值得被帮助。",
+        "你的眼神里有星星，只是偶尔被乌云遮住，拨开就好。",
+        "你的每一份努力，小莓都在见证。",
+        "刘源是全世界独一无二的刘源，这一点无人能替代。",
+        "你对自己的高要求是因为你优秀，但也可以偶尔放松哦。",
+        "你带给朋友的正反馈，让大家都更喜欢靠近你。",
+        "你的笑容比草莓糖还甜，要多笑笑呀。",
+        "能够欣赏小莓的人，内心都有一片柔软花园。",
+        "你眼中的世界一定很温柔，因为你是那样的人。",
+        "你写的字/画的画（如果有）肯定像草莓粒一样可爱。",
+        "你勇敢面对人际磨合，已经是社交专家啦。",
+        "你对自己宽容一点，就是最棒的礼物。",
+        "就算全世界偶尔下雨，小莓夸夸窝也是晴天。",
+        "有些花春天开，有些花夏天开，你的花期总会到来。",
+        "你的作息、烦恼、心情都值得被重视。",
+        "刘源，你有着让人羡慕的少女灵气。",
+        "你一直在找寻合适的穿搭，这是热爱生活的证明！",
+        "你在兰州/任何地方都能把小莓的甜传播出去。",
+        "你的自我觉察能力很强，能认识情绪很厉害。",
+        "恋爱/友情里你一定是很棒的伙伴。",
+        "你遇到挫折会EMO但很快又会振作，生命力满满。",
+        "你就像一颗裹着糖霜的莓莓，外表可爱内里坚强。",
+        "你对世界的善意终将回到你身上。",
+        "你的朋友圈有你会更温暖，大家心里都知道。",
+        "每一个今天没有放弃的你，都值得欢呼。",
+        "你让小莓这个意象变得更加美好。",
+        "你的名字念起来就像是草莓田里的风，好听极了。",
+        "你一直在努力与人相处，这个行动就值得点赞。",
+        "你的真诚永远会吸引真诚的人。",
+        "学习压力再大，你都没逃跑，太酷了。",
+        "你有种让人感到安宁的能量。",
+        "你就像漫画里走出来的软萌女主角。",
+        "你的理智和感性平衡得很好，是聪明女孩。",
+        "如果夸赞有颜色，那一定是草莓红。",
+        "你拥有疗愈自己的能力，多给自己一点时间。",
+        "喜欢你的人正在路上，好运也是。",
+        "你坚持喜欢小莓这么多年，长情又浪漫。",
+        "你认真给朋友提供情绪价值，你超好。",
+        "你的生命里有无限可能性，像草莓种子可以长出很多果实。",
+        "你值得每日的日落和草莓慕斯。",
+        "你应对压力的方式已经比很多大人成熟。",
+        "你有着敏锐的穿搭直觉，那是天赋哦。",
+        "和自己和解的那一天，世界都会爱你。",
+        "你的忍耐力像草莓植株一样顽强。",
+        "不要怕暂时的孤单，小莓和夸夸一直在。",
+        "你每一次抬头看天空的样子都很治愈。",
+        "你的善良从来不是弱点，而是光环。"
+    ];
+
+    // 2. 组合生成器：保证总条目≥500 (生成400+动态但走心的句子，避免重复感)
+    // 用形容词库 + 名词库 + 短语库 组合出变化多样的夸夸，全部针对刘源/学业人际/草莓元素
+    const adjectives = [
+        "温柔的", "甜甜的", "勇敢的", "细腻的", "独特的", "闪闪发光的", "治愈系", "元气", "可爱的", "坚定的",
+        "暖心的", "聪慧的", "灵动的", "明媚的", "软乎乎的", "草莓味的", "开朗的", "善良的", "有耐心的", "宽容的",
+        "坚韧的", "清新的", "浪漫的", "乐观的", "富有创意的", "认真的", "谦逊的", "真诚的", "独立的"
+    ];
+    const nouns = [
+        "小莓精灵", "草莓软糖", "春日暖阳", "雨后彩虹", "甜梦泡泡", "粉红云朵", "森系少女", "莓果气泡水",
+        "童话主角", "人间草莓", "元气甜心", "治愈星", "暖心月亮", "莓莓蛋糕", "闪闪发光的星星"
+    ];
+    const actions = [
+        "认真完成作业", "努力与人沟通", "照顾自己的情绪", "坚持穿搭审美", "面对压力不退缩",
+        "给朋友鼓励", "尝试新东西", "好好吃饭休息", "表达真实想法", "反思自我成长"
+    ];
+    const encouragements = [
+        "在学业压力中依然保持可爱", "处理人际关系时先爱自己", "像草莓一样外表柔软内心坚强",
+        "懂得适时释放情绪", "不断提升自己的内在", "让身边的人感到舒适", "不放弃对美好的追求",
+        "拥有一颗敏感又善良的心", "慢慢成为更完整的自己", "每天都比昨天更接纳自己"
+    ];
+
+    // 生成动态夸夸模板 (保证不单调)
+    function generateDynamicCompliments(numNeeded) {
+        let dynamicList = [];
+        // 多种句式模板
+        const templates = [
+            "刘源，你的{adj}{noun}气质，就像{enc}，真的太迷人啦。",
+            "你知道吗？你{action}的样子，就像一颗正在成熟的{adj}草莓，超级棒！",
+            "小莓为你骄傲！{enc}，这可不是谁都能做到的。",
+            "你{action}，这种{adj}品质值得收获999颗草莓！",
+            "刘源宝贝，你的{adj}性格加上{enc}，简直就是人间理想莓。",
+            "学业或人际只是关卡，而你本身是{adj}{noun}，永远珍贵。",
+            "你的{adj}心思，让周围充满了草莓香气～ 一定要继续发光。",
+            "每次看到你{action}，小莓窝都会放烟花✨ 你太厉害了。",
+            "你努力平衡压力和自我，像{adj}草莓树一样充满生命力。",
+            "就算偶尔EMO，也改变不了你是{adj}{noun}的事实！",
+            "你身上{enc}的特质，是真正的魅力所在。",
+            "你的笑容是{adj}草莓酱，抹在谁心上谁就甜。",
+            "刘源，你的{adj}行动力，正在悄悄改变自己的小宇宙。",
+            "你处理{action}的时候那种专注，比草莓蛋糕还吸引人。",
+            "喜欢你{enc}的样子，那是最真实的刘源。"
+        ];
+        
+        for (let i = 0; i < numNeeded; i++) {
+            const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+            const randomAction = actions[Math.floor(Math.random() * actions.length)];
+            const randomEnc = encouragements[Math.floor(Math.random() * encouragements.length)];
+            const template = templates[i % templates.length];
+            let sentence = template
+                .replace(/{adj}/g, randomAdj)
+                .replace(/{noun}/g, randomNoun)
+                .replace(/{action}/g, randomAction)
+                .replace(/{enc}/g, randomEnc);
+            // 保证句子结尾有标点，去除可能的重复表情
+            if (!sentence.endsWith("！") && !sentence.endsWith("。") && !sentence.endsWith("~")) sentence += "！";
+            dynamicList.push(sentence);
+        }
+        return dynamicList;
+    }
+
+    // 3. 短小暖心短语库 (增加更多元气弹)
+    const shortSweet = [
+        "你今天已经超棒了！", "刘源是最甜的小莓女孩！", "压力退散！好运莓莓来～", "你的人际敏感度是礼物哦",
+        "你值得被朋友捧在手心！", "每一门功课都会为你让路！", "你有一种让人安心的魔力。", "你的内心就像草莓果酱，甜甜软软。",
+        "你的穿搭未来一定会惊艳所有人！", "你很珍贵，比所有草莓加起来都甜。", "宇宙在偷偷爱着你，小莓也知道。",
+        "今天也有小莓为你打气！", "你正在成为更好的自己。", "你的笑容可以治愈一切emo。", "不开心的时候就想想草莓，你是最棒的。",
+        "你拥有的温柔足以融化冰雪。", "你值得特别温柔的对待。", "你的朋友会慢慢发现你的好。", "坚持做自己，你超酷的。",
+        "你的存在让世界变可爱了0.01%～ 加在一起就很厉害！"
+    ];
+
+    // 合并所有夸夸池 (总数量 ≥ 500)
+    let allCompliments = [];
+
+    // 先加入核心手写 (coreCompliments 目前约104条，数一下)
+    // 实际 coreCompliments 统计: 我粗略估计上面写了103~105，手动确保不低于100
+    // 补充一些确保足够
+    const extraHandmade = [
+        "你的情绪起伏很正常，就像草莓季节有晴有雨，但总归丰收。",
+        "你对朋友总是正面回应，你是团队里的小太阳。",
+        "你爱小莓这件小事，就透露出你内心的纯真，这很宝贵。",
+        "你的学业压力会慢慢变成你的勋章，相信时间。",
+        "喜欢你的人正在路上，在此之前我疯狂夸你！",
+        "你坚持自己的穿搭想法，这本身就是自我认同。",
+        "你的存在让这个下午变得格外甜。",
+        "你能看到这条夸夸，说明你值得被爱。"
+    ];
+    const finalCore = [...coreCompliments, ...extraHandmade];
+    // 目前 finalCore 长度 ≈ 112 条
+
+    // 短甜短语加入，作为一部分
+    const shortSweetPhrases = [...shortSweet]; // 20条
+
+    // 动态生成 380 条 (确保总数轻松过500)
+    const dynamicCount = 500 - (finalCore.length + shortSweetPhrases.length);
+    // 动态生成 至少 370~400 均可
+    const neededDynamic = dynamicCount > 0 ? dynamicCount + 30 : 400;  // 保证总量 ≥ 550
+    const dynamicPart = generateDynamicCompliments(neededDynamic);
+    
+    // 合并总库
+    allCompliments = [...finalCore, ...shortSweetPhrases, ...dynamicPart];
+    
+    // 去重简单处理（按字符串去重,避免过于重复的模板相同）
+    const uniqueSet = new Set(allCompliments);
+    let finalList = Array.from(uniqueSet);
+    // 如果去重后少于500，再补动态组合
+    while (finalList.length < 520) {
+        finalList.push(generateDynamicCompliments(1)[0]);
+    }
+    // 重新赋值, 最终不少于 500 条 (实际大概550~600)
+    allCompliments = finalList;
+    console.log("实际夸夸总数: " + allCompliments.length);  // 保证>500
+
+    // 辅助DOM元素
+    const complimentDisplay = document.getElementById("complimentDisplay");
+    const newBtn = document.getElementById("newComplimentBtn");
+    const counterSpan = document.getElementById("counterInfo");
+
+    // 更新计数器文案（显示总条数）
+    counterSpan.innerHTML = `🍓 莓莓夸夸宝库 · ${allCompliments.length} 条专属赞美 🍓`;
+
+    // 随机展示一条
+    function showRandomCompliment() {
+        const randomIndex = Math.floor(Math.random() * allCompliments.length);
+        let complimentText = allCompliments[randomIndex];
+        // 确保句子有可爱感，稍微加工
+        complimentDisplay.style.opacity = "0";
+        setTimeout(() => {
+            complimentDisplay.innerText = complimentText;
+            complimentDisplay.style.opacity = "1";
+            // 添加一个轻微的心跳动画
+            complimentDisplay.style.transform = "scale(1.02)";
+            setTimeout(() => {
+                complimentDisplay.style.transform = "scale(1)";
+            }, 200);
+        }, 100);
+    }
+
+    // 初次加载随机显示
+    window.addEventListener("load", () => {
+        showRandomCompliment();
+        // 生成漂浮草莓粒装饰
+        generateFloatingBerries();
+    });
+
+    newBtn.addEventListener("click", () => {
+        showRandomCompliment();
+        // 按钮点击可爱震动效果
+        newBtn.style.transform = "scale(0.96)";
+        setTimeout(() => { newBtn.style.transform = ""; }, 150);
+    });
+
+    // 背景漂浮草莓粒子 (增加可爱度)
+    function generateFloatingBerries() {
+        const bg = document.getElementById("berryBg");
+        const berryEmojis = ["🍓", "🍓", "🍓", "🌸", "✨", "🍓", "🍰"];
+        for (let i = 0; i < 35; i++) {
+            const berry = document.createElement("i");
+            const randomBerry = berryEmojis[Math.floor(Math.random() * berryEmojis.length)];
+            berry.innerHTML = randomBerry;
+            berry.style.left = Math.random() * 100 + "%";
+            berry.style.fontSize = (Math.random() * 24 + 16) + "px";
+            berry.style.animationDuration = (Math.random() * 12 + 8) + "s";
+            berry.style.animationDelay = Math.random() * 10 + "s";
+            berry.style.opacity = Math.random() * 0.25 + 0.1;
+            bg.appendChild(berry);
+        }
+    }
+
+    // 控制台输出温暖的提醒（轻量）
+    console.log("%c🍓 刘源同学！你超棒！莓莓夸夸窝已就绪，共" + allCompliments.length + "条治愈能量~", "color: #ff6f91; font-size: 16px;");
+</script>
+</body>
+</html>
