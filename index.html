@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML工坊 - 短链接分享系统</title>
+    <title>短链接·HTML分享工具</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -31,34 +31,38 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
+            font-size: 14px;
         }
         .toolbar button:hover { background: #2563eb; }
-        .link-area {
+        .toolbar .publish { background: #8b5cf6; }
+        .toolbar .publish:hover { background: #7c3aed; }
+        .result-area {
             background: #0f172a;
-            padding: 8px 16px;
+            padding: 12px 20px;
             border-bottom: 1px solid #334155;
             display: flex;
             gap: 12px;
             align-items: center;
             flex-wrap: wrap;
         }
-        .link-area input {
+        .result-area input {
             flex: 1;
             background: #1e293b;
             border: 1px solid #475569;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 8px;
             color: #e2e8f0;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 14px;
         }
-        .link-area button {
+        .result-area button {
             background: #10b981;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 8px;
             color: white;
             cursor: pointer;
+            font-weight: bold;
         }
         .main-container {
             display: flex;
@@ -82,7 +86,7 @@
             color: #e2e8f0;
             border: none;
             padding: 16px;
-            font-family: monospace;
+            font-family: 'Monaco', monospace;
             font-size: 13px;
             resize: none;
             outline: none;
@@ -93,31 +97,30 @@
             border: none;
         }
         .status {
-            font-size: 12px;
-            color: #94a3b8;
-            padding: 6px 16px;
+            font-size: 13px;
+            padding: 8px 20px;
             background: #0f172a;
             border-top: 1px solid #334155;
+            color: #94a3b8;
         }
         @media (max-width: 700px) {
             .main-container { flex-direction: column; }
-            .preview-pane { border-left: none; border-top: 2px solid #334155; min-height: 300px; }
+            .preview-pane { border-left: none; border-top: 2px solid #334155; min-height: 280px; }
         }
     </style>
 </head>
 <body>
 
 <div class="toolbar">
-    <span style="font-weight: bold; color: white;">HTML 工坊</span>
-    <button id="runBtn">刷新预览</button>
-    <button id="publishBtn" style="background:#8b5cf6;">生成短链接</button>
-    <button id="copyBtn">复制链接</button>
-    <button id="demoBtn">加载示例</button>
+    <span style="font-weight: bold; color: white;">🔗 短链接·HTML工坊</span>
+    <button id="runBtn">▶ 刷新预览</button>
+    <button id="publishBtn" class="publish">✨ 生成短链接</button>
+    <button id="demoBtn">📄 加载示例</button>
 </div>
-<div class="link-area">
-    <span style="color:#94a3b8; font-size:13px;">短链接：</span>
-    <input type="text" id="shareLink" readonly placeholder="点击「生成短链接」获得短链接">
-    <button id="shortenBtn" style="background:#f59e0b;">手动缩短</button>
+<div class="result-area">
+    <span style="color:#94a3b8;">📎 短链接：</span>
+    <input type="text" id="shortLinkInput" readonly placeholder="点击「生成短链接」">
+    <button id="copyBtn">📋 复制链接</button>
 </div>
 
 <div class="main-container">
@@ -129,7 +132,7 @@
     </div>
 </div>
 <div class="status" id="statusMsg">
-    提示：编写代码后点击「生成短链接」获得可分享的短链接
+    💡 编写代码 → 点击「生成短链接」→ 复制链接分享给任何人
 </div>
 
 <script>
@@ -139,8 +142,7 @@
     const publishBtn = document.getElementById('publishBtn');
     const copyBtn = document.getElementById('copyBtn');
     const demoBtn = document.getElementById('demoBtn');
-    const shortenBtn = document.getElementById('shortenBtn');
-    const shareLinkInput = document.getElementById('shareLink');
+    const shortLinkInput = document.getElementById('shortLinkInput');
     const statusMsg = document.getElementById('statusMsg');
 
     function showMessage(msg, isError) {
@@ -148,14 +150,20 @@
         statusMsg.style.color = isError ? '#f87171' : '#10b981';
         setTimeout(() => {
             statusMsg.style.color = '#94a3b8';
-            statusMsg.innerHTML = '提示：编写代码后点击「生成短链接」获得可分享的短链接';
-        }, 3000);
+            statusMsg.innerHTML = '💡 编写代码 → 点击「生成短链接」→ 复制链接分享给任何人';
+        }, 4000);
     }
 
     function updatePreview() {
         let code = textarea.value;
         if (!code.trim()) {
-            code = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>空白页面</title></head><body style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h2>欢迎使用</h2><p>在左侧编写 HTML 代码，点击「生成短链接」分享给任何人</p></body></html>';
+            code = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>欢迎</title></head>
+<body style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;">
+<div style="text-align:center"><h2>✨ HTML 短链接工坊</h2><p>编辑左侧代码，点击「生成短链接」获得短链接</p></div>
+</body>
+</html>`;
             textarea.value = code;
         }
         const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
@@ -164,11 +172,11 @@
         iframeDoc.close();
     }
 
-    // 生成长链接（基于hash）
+    // 生成长链接
     function generateLongLink() {
         const code = textarea.value;
         if (!code.trim()) {
-            showMessage('请先编写一些代码', true);
+            showMessage('❌ 请先编写代码', true);
             return null;
         }
         const encoded = encodeURIComponent(code);
@@ -176,66 +184,63 @@
         return `${baseUrl}#code=${encoded}`;
     }
 
-    // 使用免费短链接API（TinyURL）
-    async function shortenUrl(longUrl) {
+    // 短链接服务
+    async function getShortLink(longUrl) {
+        // 方法1: TinyURL
         try {
-            // 使用 TinyURL 免费API
-            const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-            if (response.ok) {
-                const shortUrl = await response.text();
-                return shortUrl;
+            const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+            if (res.ok) {
+                const short = await res.text();
+                if (short && short.startsWith('http')) return short;
             }
-        } catch(e) {
-            console.log('TinyURL失败');
-        }
+        } catch(e) {}
         
-        // 备用方案：使用 is.gd 短链接服务
+        // 方法2: is.gd
         try {
-            const response = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`);
-            if (response.ok) {
-                const shortUrl = await response.text();
-                return shortUrl;
+            const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`);
+            if (res.ok) {
+                const short = await res.text();
+                if (short && short.startsWith('http')) return short;
             }
-        } catch(e) {
-            console.log('is.gd失败');
-        }
+        } catch(e) {}
         
         return null;
     }
 
-    // 生成短链接并显示
+    // 生成短链接（主要功能）
     async function generateShortLink() {
         const longLink = generateLongLink();
         if (!longLink) return;
         
-        showMessage('正在生成短链接...', false);
-        const shortLink = await shortenUrl(longLink);
+        showMessage('⏳ 正在生成短链接...', false);
+        
+        const shortLink = await getShortLink(longLink);
         
         if (shortLink) {
-            shareLinkInput.value = shortLink;
-            showMessage('短链接生成成功！复制即可分享', false);
-            
-            // 同时更新地址栏
+            // 只显示短链接！
+            shortLinkInput.value = shortLink;
+            showMessage('✅ 短链接生成成功！点击复制即可分享', false);
+            // 同时更新浏览器地址栏（保持长链接用于分享）
             if (!window.location.href.includes('#code=')) {
-                history.pushState(null, '', longLink);
+                history.replaceState(null, '', longLink);
             }
         } else {
-            // 如果短链接服务都失败，显示长链接
-            shareLinkInput.value = longLink;
-            showMessage('短链接服务暂时不可用，已生成长链接（仍可分享）', true);
+            // 如果短链接服务都失败，给出提示但不显示长链接
+            showMessage('⚠️ 短链接服务暂时不可用，请稍后重试', true);
+            shortLinkInput.value = '';
         }
     }
 
     // 复制链接
     async function copyLink() {
-        const link = shareLinkInput.value;
+        const link = shortLinkInput.value;
         if (!link) {
-            showMessage('请先点击「生成短链接」', true);
+            showMessage('❌ 请先点击「生成短链接」', true);
             return;
         }
         try {
             await navigator.clipboard.writeText(link);
-            showMessage('链接已复制到剪贴板！', false);
+            showMessage('📋 短链接已复制！粘贴发给任何人即可', false);
         } catch(e) {
             showMessage('请手动复制链接', true);
         }
@@ -247,7 +252,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>示例页面</title>
+    <title>我的分享页面</title>
     <style>
         body {
             margin: 0;
@@ -265,7 +270,7 @@
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
-        h1 { color: #1e1b4b; }
+        h1 { color: #1e1b4b; margin: 0 0 10px 0; }
         button {
             background: #7c3aed;
             border: none;
@@ -274,28 +279,30 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin: 10px;
         }
-        .counter { font-size: 48px; font-weight: bold; color: #7c3aed; margin: 20px 0; }
+        .count { font-size: 48px; font-weight: bold; color: #7c3aed; margin: 20px 0; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>分享成功！</h1>
-        <p>这个页面是通过 HTML工坊 创建的</p>
-        <div class="counter" id="count">0</div>
-        <button onclick="document.getElementById('count').innerText++">点我 +1</button>
-        <button onclick="document.getElementById('count').innerText=0" style="background:#64748b;">重置</button>
-        <p style="margin-top:24px; font-size:12px; color:#666;">任何人都能通过短链接看到这个页面</p>
+        <h1>🎉 分享成功！</h1>
+        <p>通过短链接分享的页面</p>
+        <div class="count" id="count">0</div>
+        <button onclick="count.innerText++">点我 +1</button>
+        <button onclick="count.innerText=0">重置</button>
+        <p style="font-size:12px; color:#666;">任何人点开短链接都能看到这个页面</p>
     </div>
+    <script>const count = document.getElementById('count');<\/script>
 </body>
 </html>`;
         textarea.value = demo;
         updatePreview();
-        showMessage('已加载示例，点击「生成短链接」即可分享', false);
+        showMessage('✅ 示例已加载，点击「生成短链接」', false);
+        shortLinkInput.value = '';
     }
 
-    // 从hash加载代码
+    // 从hash加载（别人打开链接时）
     function loadFromHash() {
         const hash = window.location.hash.substring(1);
         if (hash && hash.startsWith('code=')) {
@@ -304,7 +311,7 @@
                 if (decoded) {
                     textarea.value = decoded;
                     updatePreview();
-                    showMessage('已从链接加载代码', false);
+                    showMessage('📎 已从链接加载页面', false);
                     return true;
                 }
             } catch(e) {}
@@ -312,36 +319,25 @@
         return false;
     }
 
-    // 手动缩短当前长链接
-    async function manualShorten() {
-        const longLink = generateLongLink();
-        if (!longLink) return;
-        const shortLink = await shortenUrl(longLink);
-        if (shortLink) {
-            shareLinkInput.value = shortLink;
-            showMessage('已生成短链接', false);
-        } else {
-            shareLinkInput.value = longLink;
-            showMessage('短链接生成失败，已显示长链接', true);
-        }
-    }
-
-    window.addEventListener('hashchange', () => { loadFromHash(); });
+    window.addEventListener('hashchange', () => loadFromHash());
 
     function init() {
         runBtn.addEventListener('click', updatePreview);
         publishBtn.addEventListener('click', generateShortLink);
         copyBtn.addEventListener('click', copyLink);
         demoBtn.addEventListener('click', loadDemo);
-        shortenBtn.addEventListener('click', manualShorten);
+        
         textarea.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 updatePreview();
             }
         });
+        
         const loaded = loadFromHash();
-        if (!loaded) loadDemo();
+        if (!loaded) {
+            loadDemo();
+        }
         updatePreview();
     }
 
