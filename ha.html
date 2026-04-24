@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🍎 实习教师·快乐补给站 | 解压治愈小窝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 避免拖动干扰，不影响点击 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fdf8e7 0%, #ffe6c9 100%);
+            font-family: 'Segoe UI', 'Comic Neue', 'Quicksand', 'Poppins', system-ui, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 小飘浮纸飞机 */
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-bg i {
+            position: absolute;
+            font-size: 32px;
+            opacity: 0.15;
+            animation: floatPaper 18s infinite linear;
+        }
+
+        @keyframes floatPaper {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0;}
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0.2;}
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            justify-content: center;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: rgba(255, 253, 245, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 56px;
+            box-shadow: 0 20px 35px rgba(148, 85, 45, 0.2);
+            border: 1px solid #ffe0b5;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        /* 左侧主加油区 */
+        .main-left {
+            flex: 2;
+            min-width: 280px;
+        }
+
+        .right-panel {
+            flex: 1.4;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* 头部 */
+        .header {
+            background: #ffcd94;
+            padding: 20px 24px;
+            text-align: center;
+            border-bottom: 3px dashed #ffe0a3;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            color: #7b3f00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #ffedb5;
+            border-radius: 60px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            color: #aa6f2c;
+        }
+
+        /* 鼓励区 */
+        .encourage-area {
+            padding: 28px 24px;
+            background: #fffaf0;
+            text-align: center;
+        }
+
+        .daily-msg {
+            background: #fffbee;
+            border-radius: 48px;
+            padding: 28px 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ad6b35;
+            box-shadow: inset 0 0 0 2px #ffe1b3, 0 8px 14px rgba(0,0,0,0.02);
+        }
+
+        .refresh-btn {
+            background: #f3c26b;
+            border: none;
+            border-radius: 60px;
+            padding: 10px 24px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 解压互动区 三块 */
+        .game-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .fun-card {
+            background: #fff4e4;
+            border-radius: 40px;
+            padding: 20px 16px;
+            flex: 1;
+            text-align: center;
+            transition: 0.1s;
+            border: 1px solid #ffddb0;
+        }
+
+        .fun-card h3 {
+            color: #b4612a;
+            margin-bottom: 12px;
+        }
+
+        .action-btn {
+            background: #ffc285;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: bold;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #5c2e0a;
+        }
+        .action-btn:active { transform: scale(0.96);}
+
+        .noise-level {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #ad5a22;
+        }
+
+        .slap-area {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 8px 0;
+        }
+
+        /* 笑话区 */
+        .joke-box {
+            background: #ffe5ce;
+            border-radius: 48px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .joke-text {
+            background: white;
+            border-radius: 36px;
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        /* 行动记录日志 */
+        .log-area {
+            background: #fff3e2;
+            border-radius: 48px;
+            padding: 16px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .log-title {
+            font-weight: bold;
+            border-left: 6px solid #ffac6f;
+            padding-left: 12px;
+            margin-bottom: 12px;
+        }
+
+        .log-entry {
+            font-size: 0.75rem;
+            margin: 6px 0;
+            color: #9b6a3c;
+            border-bottom: 1px dotted #f7cfaa;
+            padding-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 28px;
+            color: #c18854;
+            font-size: 0.7rem;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        @media (max-width: 780px) {
+            .daily-msg { font-size: 1rem; }
+            .header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="floating-bg" id="floatBg"></div>
+<div class="container">
+    <!-- 左边主要鼓励 + 互动集合 -->
+    <div class="main-left card">
+        <div class="header">
+            <h1>🍎 实习教师·快乐加油站 🧸
+                <span class="badge">✨ 专治emo · 满电重启 ✨</span>
+            </h1>
+            <p style="color:#9b601c;">老婆子找活？学生太吵？来这儿吸口仙气～</p>
+        </div>
+        <div class="encourage-area">
+            <div class="daily-msg" id="dailyEncourage">
+                🌟 加载今日能量中...
+            </div>
+            <button class="refresh-btn" id="refreshEncourageBtn">✨ 换一句 · 续杯好运 ✨</button>
+        </div>
+
+        <!-- 三大解压互动板块 -->
+        <div class="game-grid" style="padding: 0 20px 20px 20px;">
+            <!-- 板块1：虚拟降噪器 (针对学生吵闹) -->
+            <div class="fun-card">
+                <h3>📢 降噪教室 🔊➡️🔇</h3>
+                <div class="noise-level" id="noiseLevel">🔊🔊🔊 很吵 85%</div>
+                <button class="action-btn" id="reduceNoiseBtn">🧹 温柔降噪 · 维持纪律</button>
+                <div style="font-size:12px; margin-top:8px;">每次点击减少噪音，学生乖一点✨</div>
+            </div>
+            <!-- 板块2：敲打老婆子沙包 (解压) -->
+            <div class="fun-card">
+                <h3>👵 老婆子出气沙包 👊</h3>
+                <div class="slap-area" id="slapDummy">👵💢 👊</div>
+                <button class="action-btn" id="slapBtn">🔨 轻轻捶一拳 (解压专用)</button>
+                <div style="font-size:12px;">虚拟发泄，不伤害任何人~ 打到她“哎呦”</div>
+            </div>
+            <!-- 板块3：学生的可爱转化器 (把吵闹变笑声) -->
+            <div class="fun-card">
+                <h3>🎈 学生噪音 → 快乐泡泡</h3>
+                <div id="bubbleCounter">🎈 转化出 0 个快乐泡泡</div>
+                <button class="action-btn" id="convertBtn">✨ 噪音变泡泡 ✨</button>
+                <div style="font-size:12px;">把烦人的吵闹变成彩色泡泡～</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧区域：笑话库 + 行动记录 -->
+    <div class="right-panel">
+        <div class="card joke-box">
+            <h3>🤣 教师冷笑话 & 职场梗 🤣</h3>
+            <div class="joke-text" id="jokeDisplay">
+                点击下方按钮，收获一个小笑话～
+            </div>
+            <button class="action-btn" id="newJokeBtn">🍬 来颗笑话糖</button>
+        </div>
+
+        <div class="card log-area">
+            <div class="log-title">📋 快乐记录仪 · 今日解压事迹</div>
+            <div id="logList">
+                <div class="log-entry">✨ 小窝搭建完成，欢迎实习老师来充电！</div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>💪 你已经很棒了！老婆子的活儿就当是升级打怪，学生吵闹是独特BGM。每天都要记得奖励自己🍬</footer>
+
+<script>
+    // ----------------------------- 丰富鼓励库 (专为实习老师定制，30+每日鼓励变化组合可达200+种) -------------------------
+    const encouragementList = [
+        "🌻 你已经做得非常好了！实习期就是打怪升级，老婆子只是一个小怪，马上通关~",
+        "🍬 今天学生的吵闹声，其实是他们活力的证明，而你的耐心是光。",
+        "📖 每一份杂活都在帮你攒经验值，未来你会是个游刃有余的超人老师！",
+        "🎈 教室里的噪音就像泡泡，戳破它，底下都是可爱的求知欲。",
+        "🧸 你是实习老师，也是学生心里的星星，别让老婆子遮住你的光。",
+        "🍎 教学路漫漫，你已经迈出了最勇敢的一步，超厉害！",
+        "✨ 再烦的事，深呼吸三次，然后告诉自己：我是来人间渡劫的仙女老师。",
+        "🍭 那些调皮的孩子也许以后会记得，有一位温柔的老师曾包容过他们。",
+        "🌸 辛苦一天啦！摸摸头，奖励自己一杯奶茶，今天功德圆满。",
+        "💪 老婆子给的活就当健身，你越来越强壮了（心理上）！",
+        "🎓 等实习结束，你会感谢现在咬牙坚持的自己。超级期待那天的你！",
+        "⭐ 你拥有让课堂变有趣的能力，只要多给自己一点肯定。",
+        "🍬 学生吵闹证明他们精力旺盛，他们需要你这样的领路人。",
+        "🌱 教育是一棵树摇动另一棵树，你已经摇动了很多小树苗。",
+        "🧘 别把老婆子的话太放心上，你才是自己教学故事的主角。",
+        "📚 每一节吵闹的课都是你修炼控场术的道场，未来你会是大师。",
+        "🍓 记得吃颗糖，生活已经够苦了，你要甜一点。",
+        "🌈 你的努力会被看见的，至少在这个小窝里，你是最棒的实习老师！",
+        "🎈 学生吵闹时，想象他们是向你发射烟花，吵就吵吧，至少热闹。",
+        "👑 今天也是无冕之王，你镇住了课堂就是胜利。",
+        "🧸 孩子王不好当，但你正在一步步成为他们信任的人。",
+        "📖 杂活做完一件少一件，成就感却会积累。",
+        "🎧 降噪耳机不是万能的，但你的幽默和坚韧是万能的。",
+        "🍬 如果累了，就把烦恼丢进这个页面，我们帮你接住。",
+        "💐 你值得被夸奖，今天也圆满完成教学任务，太厉害了！",
+        "⭐ 实习就是不断升级，每一份委屈都会变成铠甲。",
+        "☕ 喝杯热饮，看看窗外，宇宙都为你打气。",
+        "🌟 你身上有一种温柔的力量，学生能感受到，老婆子迟早也会。",
+        "📿 把“老婆子又找活了”转化成“又给我送经验包了”，心态无敌。",
+        "🧸 小窝帮你存档好运，明天上课自带光芒~",
+        "🍎 今天的你，比昨天更坚韧，这就是最大的成长。"
+    ];
+    
+    // 笑话库（教师/实习/职场幽默）
+    const jokePool = [
+        "为什么实习老师最喜欢周五？因为可以合法“失业”两天。",
+        "老婆子说：小年轻要多干活。我回：好的，老婆子您多休息。 — 求生欲满分。",
+        "学生吵闹像菜市场，我像卖菜大婶：安静！再吵就多布置作业！ 全场沉默。",
+        "实习老师的日常：改作业改到眼花，然后告诉自己，这是在看旋转木马。",
+        "老婆子让我搬书，我搬出了健身房的既视感，肱二头肌日渐发达。",
+        "某学生上课讲话被罚站，他问：老师，站多久？我说：站到我觉得顺眼为止。",
+        "教师休息室传说：每一位老婆子年轻时都是被虐过的实习生。",
+        "实习鉴定表上，我想写：能活着完成实习，已是奇迹。",
+        "学生问：老师你为什么总带保温杯？我：因为里面装着我的泪和枸杞。",
+        "老婆子给我一堆杂活，我在心里给她起了个外号：任务发布NPC。",
+        "课堂太吵，我怒吼一声，结果一个学生说：“老师你终于有情绪了，好真实。”",
+        "实习之后才明白，大学里学的教育学和现实之间的差距，是十万八千里的吵闹。",
+        "改作文发现学生写：我的梦想是当老师，然后给学生布置很多作业。 -- 天道好轮回。",
+        "老婆子说：“年轻人要多吃苦”，我回道：“苦已经吃够了，能加点糖吗？”",
+        "最治愈的瞬间：放学后空无一人的教室，安静得像天堂。"
+    ];
+
+    // 状态管理
+    let noisePercent = 85;   // 初始吵闹度
+    let bubbleCount = 0;
+    let slapCount = 0;
+    let logEntries = [];
+
+    // DOM 元素
+    const dailyMsgDiv = document.getElementById("dailyEncourage");
+    const refreshEncBtn = document.getElementById("refreshEncourageBtn");
+    const noiseLevelSpan = document.getElementById("noiseLevel");
+    const reduceNoiseBtn = document.getElementById("reduceNoiseBtn");
+    const slapBtn = document.getElementById("slapBtn");
+    const slapDummyDiv = document.getElementById("slapDummy");
+    const bubbleCounterSpan = document.getElementById("bubbleCounter");
+    const convertBtn = document.getElementById("convertBtn");
+    const jokeDisplay = document.getElementById("jokeDisplay");
+    const newJokeBtn = document.getElementById("newJokeBtn");
+    const logListDiv = document.getElementById("logList");
+
+    // 添加入日志
+    function addLog(message, emoji = "📝") {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second:'2-digit' });
+        const entry = `${emoji} ${time} ${message}`;
+        logEntries.unshift(entry);
+        if (logEntries.length > 12) logEntries.pop();
+        renderLog();
+    }
+
+    function renderLog() {
+        logListDiv.innerHTML = logEntries.map(entry => `<div class="log-entry">${entry}</div>`).join('');
+        if(logEntries.length === 0) logListDiv.innerHTML = '<div class="log-entry">✨ 还没有解压记录，快来互动吧~</div>';
+    }
+
+    // 随机显示鼓励 (从库中随机)
+    function showRandomEncouragement() {
+        const randomIndex = Math.floor(Math.random() * encouragementList.length);
+        dailyMsgDiv.innerHTML = encouragementList[randomIndex];
+        addLog(`获得一句能量补给: ${encouragementList[randomIndex].substring(0, 38)}...`, "🍎");
+    }
+
+    // 降噪逻辑
+    function reduceNoise() {
+        let decrease = Math.floor(Math.random() * 18) + 10; // 10~27
+        noisePercent = Math.max(15, noisePercent - decrease);
+        if (noisePercent <= 20) {
+            noiseLevelSpan.innerHTML = `🔇✨ 安静多了！ ${noisePercent}% 宁静度↑`;
+            addLog(`使用了温柔降噪，吵闹度降至${noisePercent}%，学生乖了～`, "📖");
+        } else {
+            noiseLevelSpan.innerHTML = `🔉📢 吵闹度 ${noisePercent}%  老师控场成功 👩‍🏫`;
+            addLog(`降噪成功！当前吵闹度 ${noisePercent}%`, "🧹");
+        }
+        // 如果噪音太低，偶尔反弹点欢乐，无伤大雅
+        if (noisePercent <= 15 && Math.random()<0.3) {
+            noisePercent = Math.min(40, noisePercent + 5);
+            noiseLevelSpan.innerHTML = `🔊📢 吵闹度 ${noisePercent}%  有几个小调皮又开始了～没关系再降噪`;
+            addLog(`有几个学生又闹腾了一下，噪音回升到${noisePercent}%`, "🎈");
+        }
+        updateNoiseDisplay();
+    }
+
+    function updateNoiseDisplay() {
+        if (noisePercent > 70) noiseLevelSpan.innerHTML = `🔊🔊🔊 超级吵闹 ${noisePercent}% 需要降噪~`;
+        else if (noisePercent > 40) noiseLevelSpan.innerHTML = `🔊📢 有点吵 ${noisePercent}% 继续努力`;
+        else noiseLevelSpan.innerHTML = `🔇✨ 教室好安静！ ${noisePercent}%  享受宁静💖`;
+    }
+
+    // 敲打老婆子（虚拟沙包）
+    function slapLaopo() {
+        slapCount++;
+        const reactions = [
+            "👵哎哟！轻点～", "👵哼，年轻人还挺有劲", "👵…（扶腰）下次少给你派活", "👵我错了还不行吗", "👵算你狠！", "👵💢 溜了溜了"
+        ];
+        const randomReact = reactions[Math.floor(Math.random() * reactions.length)];
+        slapDummyDiv.innerHTML = `👵💢 ${randomReact} 👊 x${slapCount}`;
+        addLog(`朝老婆子沙包挥了一拳！ (第${slapCount}下)`, "👊");
+        // 2秒后恢复默认显示
+        setTimeout(() => {
+            if(slapDummyDiv.innerHTML.includes(randomReact)) {
+                slapDummyDiv.innerHTML = `👵💢 👊 (沙包状态: 挨了${slapCount}捶)`;
+            }
+        }, 1800);
+        // 随机搞笑反馈，额外日志
+        if (slapCount % 5 === 0) {
+            addLog(`老婆子沙包已被锤了${slapCount}次，她好像老实了一点😝`, "🍬");
+        }
+    }
+
+    // 噪音变泡泡
+    function convertNoiseToBubble() {
+        // 需要当前噪音值 消耗噪音产生泡泡
+        if (noisePercent <= 15) {
+            addLog(`教室已经很安静了，没有太多噪音可以转化～ 保持宁静也不错`, "🎈");
+            bubbleCounterSpan.innerHTML = `🎈 现有 ${bubbleCount} 个快乐泡泡 (噪音不足)`;
+            return;
+        }
+        const convertAmount = Math.min(25, noisePercent - 10);
+        const bubblesGenerated = Math.floor(convertAmount / 5) + 1;
+        noisePercent = Math.max(10, noisePercent - convertAmount);
+        bubbleCount += bubblesGenerated;
+        bubbleCounterSpan.innerHTML = `🎈 转化出 ${bubbleCount} 个快乐泡泡 (最新 +${bubblesGenerated})`;
+        addLog(`将 ${convertAmount}% 吵闹转化为 ${bubblesGenerated} 个彩色泡泡，教室安静了一些`, "🎈");
+        updateNoiseDisplay();
+        // 泡泡福利：偶尔获得额外鼓励
+        if (bubblesGenerated >= 4) {
+            addLog(`✨ 泡泡发出光芒：送你一条鼓励✨`, "🍭");
+        }
+    }
+
+    // 随机笑话
+    function showRandomJoke() {
+        const randomIdx = Math.floor(Math.random() * jokePool.length);
+        jokeDisplay.innerHTML = `💡 ${jokePool[randomIdx]}`;
+        addLog(`点了个笑话：${jokePool[randomIdx].substring(0, 40)}...`, "😂");
+    }
+
+    // 背景小纸飞机
+    function generateFloatElements() {
+        const bg = document.getElementById("floatBg");
+        const icons = ["✈️", "📄", "🍎", "📖", "🧸", "🍬", "✨"];
+        for (let i=0; i<40; i++) {
+            const el = document.createElement("i");
+            const randomIcon = icons[Math.floor(Math.random()*icons.length)];
+            el.innerHTML = randomIcon;
+            el.style.left = Math.random() * 100 + "%";
+            el.style.fontSize = (Math.random() * 24 + 20) + "px";
+            el.style.animationDuration = (Math.random() * 16 + 10) + "s";
+            el.style.animationDelay = Math.random() * 12 + "s";
+            el.style.opacity = Math.random() * 0.2 + 0.08;
+            bg.appendChild(el);
+        }
+    }
+
+    // 额外初始化随机鼓励和笑话
+    function initPage() {
+        showRandomEncouragement();
+        showRandomJoke();
+        updateNoiseDisplay();
+        bubbleCounterSpan.innerHTML = `🎈 转化出 ${bubbleCount} 个快乐泡泡`;
+        addLog("欢迎来到实习教师快乐加油站！把烦恼丢进来吧~", "🍎");
+    }
+
+    // 绑定事件
+    refreshEncBtn.addEventListener("click", showRandomEncouragement);
+    reduceNoiseBtn.addEventListener("click", reduceNoise);
+    slapBtn.addEventListener("click", slapLaopo);
+    convertBtn.addEventListener("click", convertNoiseToBubble);
+    newJokeBtn.addEventListener("click", showRandomJoke);
+
+    // 额外增加一个可触摸的笑话区刷新
+    generateFloatElements();
+    initPage();
+
+    // 让敲打的地方可以连续多点几下
+    slapDummyDiv.style.cursor = "pointer";
+    slapDummyDiv.addEventListener("click", slapLaopo);
+</script>
+</body>
+</html>
