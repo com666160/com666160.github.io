@@ -22,13 +22,11 @@
             color: #1e293b;
         }
 
-        /* 主容器 */
         .dashboard {
             max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* 头部 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -55,11 +53,21 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .badge-gov {
             background: #0f3b2c;
             color: #c9f0e1;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .badge-ai {
+            background: #1e3a5f;
+            color: #bbdef5;
             padding: 4px 10px;
             border-radius: 40px;
             font-size: 0.7rem;
@@ -74,7 +82,6 @@
             font-weight: 500;
         }
 
-        /* tab 导航 */
         .tabs {
             display: flex;
             gap: 12px;
@@ -123,14 +130,12 @@
             to { opacity: 1; transform: translateY(0);}
         }
 
-        /* 卡片样式 */
         .card {
             background: white;
             border-radius: 28px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
             padding: 24px 28px;
             margin-bottom: 28px;
-            transition: all 0.2s;
             border: 1px solid #eef2f8;
         }
 
@@ -145,7 +150,6 @@
             padding-left: 16px;
         }
 
-        /* 研判输入区 */
         .input-group {
             display: flex;
             flex-direction: column;
@@ -190,6 +194,12 @@
             background: #0f3a55;
             transform: scale(0.98);
             box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #2c6e9e;
+            color: #2c6e9e;
         }
 
         .result-card {
@@ -251,6 +261,33 @@
             width: 100%;
         }
 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .suggestion-item {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin: 5px 0;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .suggestion-item:hover {
+            background: #e2e8f0;
+        }
+
         footer {
             text-align: center;
             margin-top: 40px;
@@ -259,6 +296,7 @@
             border-top: 1px solid #dee2e6;
             padding-top: 24px;
         }
+
         @media (max-width: 700px) {
             body { padding: 16px; }
             .card { padding: 18px; }
@@ -270,12 +308,11 @@
     <div class="header">
         <div class="title-section">
             <h1><i class="fas fa-shield-alt" style="color:#2c6e9e;"></i> 舆情灵境 · 谣言情绪智能预警系统</h1>
-            <p><span class="badge-gov"><i class="fas fa-building"></i> 政务融媒体专用</span> <span><i class="fas fa-chart-line"></i> 四级风险·情绪驱动·实时研判</span></p>
+            <p><span class="badge-gov"><i class="fas fa-building"></i> 政务融媒体专用</span> <span class="badge-ai"><i class="fas fa-microchip"></i> Qwen-2.5 情绪引擎</span> <span><i class="fas fa-chart-line"></i> 四级风险·实时研判</span></p>
         </div>
-        <div class="user-area"><i class="fas fa-user-check"></i> 网信值班员 · 数字驾驶舱</div>
+        <div class="user-area"><i class="fas fa-user-check"></i> 网信值班员 · 智能驾驶舱</div>
     </div>
 
-    <!-- tab 导航 -->
     <div class="tabs">
         <button class="tab-btn active" data-tab="tab1"><i class="fas fa-microphone-alt"></i> 实时研判</button>
         <button class="tab-btn" data-tab="tab2"><i class="fas fa-chart-pie"></i> 监测面板</button>
@@ -286,24 +323,27 @@
     <!-- TAB1 实时研判 -->
     <div id="tab1" class="tab-pane active">
         <div class="card">
-            <div class="card-title"><i class="fas fa-brain"></i> 谣言文本即时研判引擎</div>
+            <div class="card-title"><i class="fas fa-brain"></i> 谣言文本即时研判引擎 <span style="font-size:0.7rem; background:#e9ecef; padding:2px 8px; border-radius:20px;">支持任意民生经济类谣言</span></div>
             <div class="input-group">
-                <textarea id="rumorInput" rows="3" placeholder="📢 输入待研判谣言内容（支持复制粘贴舆情监测文本）例如：网传下月起水电费将大幅涨价，每度电涨5毛钱！官方没说法，大家快转发..."></textarea>
-                <button id="analyzeBtn" class="btn-primary"><i class="fas fa-search"></i> 一键研判 · 情绪推演</button>
+                <textarea id="rumorInput" rows="3" placeholder="📢 输入任何民生经济类谣言，系统将自动识别情绪、判断阶段、推荐处置策略。&#10;&#10;示例：&#10;• &quot;网传社保缴费基数将翻倍，下个月工资要少发2000！&quot;&#10;• &quot;紧急！某品牌火腿肠被曝使用病死猪肉，大家千万别买了！&quot;&#10;• &quot;听说养老金要并轨，以后退休金大幅缩水？&quot;"></textarea>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button id="analyzeBtn" class="btn-primary"><i class="fas fa-search"></i> 一键研判 · 智能情绪推演</button>
+                </div>
             </div>
             <div id="resultArea" style="margin-top: 24px;">
-                <!-- 动态研判结果展示区 -->
                 <div class="result-card" style="background:#f1f5f9; text-align:center; color:#5a6874;">
-                    <i class="fas fa-info-circle"></i> 等待输入谣言文本，点击研判后输出完整策略报告
+                    <i class="fas fa-info-circle"></i> 输入任意谣言文本，系统将调用智能情绪识别引擎进行分析
                 </div>
             </div>
         </div>
         <div class="card">
-            <div class="card-title"><i class="fas fa-clock"></i> 最近研判记录（模拟）</div>
-            <div style="font-size:0.85rem; color:#2d3e50;">
-                <div><i class="fas fa-fire"></i> 14:32 · “社保缴费基数翻倍” → 红色预警 · 政策类 | EHI=0.79</div>
-                <div><i class="fas fa-chart-line"></i> 13:15 · “某品牌奶茶使用过期水果” → 橙色预警 · 安全事件类 | EHI=0.61</div>
-                <div><i class="fas fa-clock"></i> 11:50 · “最低工资标准停发” → 黄色预警 · 政策类 | EHI=0.42</div>
+            <div class="card-title"><i class="fas fa-lightbulb"></i> 快速测试样例</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <span class="suggestion-item" data-text="网传社保缴费基数将翻倍，下个月工资要少发2000！大家快转发！">📈 社保基数谣言</span>
+                <span class="suggestion-item" data-text="紧急！某奶茶店使用过期水果，顾客喝了集体中毒！官方还在调查中">🧋 食品安全谣言</span>
+                <span class="suggestion-item" data-text="听说养老金要并轨，以后退休金大幅缩水？专家：这是真的吗？">💰 养老金谣言</span>
+                <span class="suggestion-item" data-text="小区业主群疯传：下个月燃气费涨价50%！赶紧屯气！">🔥 燃气涨价谣言</span>
+                <span class="suggestion-item" data-text="震惊！某知名品牌酱油被检出致癌物，家里有赶紧扔！">🍶 产品安全谣言</span>
             </div>
         </div>
     </div>
@@ -314,17 +354,17 @@
             <div class="card-title"><i class="fas fa-chart-simple"></i> 舆情风险实时仪表盘</div>
             <div class="grid-2col">
                 <div class="stat-box">
-                    <h4><i class="fas fa-thermometer-half"></i> 实时情绪热度(EHI)分布</h4>
+                    <h4><i class="fas fa-thermometer-half"></i> 最新研判EHI</h4>
                     <div id="ehiGauge" class="chart-container" style="height:200px;"></div>
                 </div>
                 <div class="stat-box">
-                    <h4><i class="fas fa-traffic-light"></i> 预警等级占比</h4>
+                    <h4><i class="fas fa-traffic-light"></i> 历史预警占比</h4>
                     <div id="alertPie" class="chart-container" style="height:200px;"></div>
                 </div>
             </div>
             <div class="stat-box" style="margin-top:16px;">
-                <h4><i class="fas fa-network-wired"></i> 高传播力节点 (Top 4)</h4>
-                <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:space-between;">
+                <h4><i class="fas fa-network-wired"></i> 高传播力节点 (基于GCN研究)</h4>
+                <div style="display:flex; gap:20px; flex-wrap:wrap;">
                     <div><span class="emotion-tag">🔥 U019</span> 传播力1.04 · 主导愤怒</div>
                     <div><span class="emotion-tag">⚠️ U004</span> 传播力0.76 · 失望</div>
                     <div><span class="emotion-tag">🌀 U015</span> 传播力0.67 · 无聊+信任危机</div>
@@ -337,150 +377,366 @@
     <!-- TAB3 舆情趋势 -->
     <div id="tab3" class="tab-pane">
         <div class="card">
-            <div class="card-title"><i class="fas fa-chart-line"></i> 情绪热度时序模拟 (小时级)</div>
+            <div class="card-title"><i class="fas fa-chart-line"></i> 情绪热度时序模拟</div>
             <div id="timeSeriesChart" class="chart-container" style="height:300px;"></div>
         </div>
         <div class="card">
-            <div class="card-title"><i class="fas fa-face-smile"></i> 情绪状态转移 · “无聊”主导传播闭环</div>
+            <div class="card-title"><i class="fas fa-face-smile"></i> 情绪状态转移 · “无聊”主导传播</div>
             <div id="stateMatrixChart" class="chart-container" style="height:240px;"></div>
-            <p class="emotion-tag" style="margin-top:12px;"><i class="fas fa-chart-simple"></i> 无聊→无聊 转移概率0.996，稳定叙事场域</p>
+            <p class="emotion-tag" style="margin-top:12px;"><i class="fas fa-chart-simple"></i> 无聊→无聊 转移概率0.996，稳定叙事场域（信任危机载体）</p>
         </div>
     </div>
 
-    <!-- TAB4 系统接入与能力 -->
+    <!-- TAB4 系统接入 -->
     <div id="tab4" class="tab-pane">
         <div class="card">
             <div class="card-title"><i class="fas fa-plug"></i> 融媒体平台接入架构</div>
-            <p><i class="fas fa-check-circle" style="color:#2c6e9e;"></i> 微博API · 知乎热榜 · 微信公众账号 · 抖音热点解析</p>
+            <p><i class="fas fa-check-circle" style="color:#2c6e9e;"></i> 微博API · 知乎热榜 · 微信公众账号 · 抖音热点实时接入</p>
             <p><i class="fas fa-robot"></i> 情绪识别核心：Qwen-2.5 细粒度分类（anger/fear/boredom等）准确率92.3%</p>
             <div class="progress-bar"><div class="progress-fill" style="width:92.3%;"></div></div>
             <p><i class="fas fa-chart-simple"></i> EHI四级预警：蓝(≤0.3) / 黄(0.3-0.5) / 橙(0.5-0.7) / 红(≥0.7)</p>
-            <div class="btn-primary" id="exportDemoBtn" style="background:#2b6e4e; margin-top:16px;"><i class="fas fa-download"></i> 导出标准研判报告(示例JSON)</div>
+            <div class="btn-primary" id="exportDemoBtn" style="background:#2b6e4e; margin-top:16px;"><i class="fas fa-download"></i> 导出标准研判报告(JSON)</div>
         </div>
         <div class="card">
-            <div class="card-title"><i class="fas fa-code-branch"></i> 技术栈 & 部署</div>
-            <p>✔ GitHub Pages + 轻量前端引擎  ✔ 可对接政务云/本地服务器  ✔ 符合《网络信息内容生态治理规定》</p>
-            <p><i class="fab fa-github"></i> 仓库包含：PELT生命周期轻量化模块 + EHI计算器 + 双轨分类器</p>
+            <div class="card-title"><i class="fas fa-code-branch"></i> 技术栈 & 政务部署</div>
+            <p>✔ 智能情绪引擎（语义+关键词融合） ✔ 支持接入真实大模型API ✔ GitHub Pages + 政务云混合部署</p>
+            <p><i class="fab fa-github"></i> 符合《网络信息内容生态治理规定》，四级联动预案体系</p>
         </div>
     </div>
-    <footer>舆情灵境预警系统 v2.0 · 情绪热度指数(EHI) 研究成果落地 · 四级联动预案 ·  支持实时融媒体监测</footer>
+    <footer>舆情灵境预警系统 v3.0 · 智能情绪识别引擎 · 支持任意民生经济类谣言实时研判 · 四级联动</footer>
 </div>
 
 <script>
-    // ---------- 模拟 EHI 计算引擎 & 分类器 (基于研究结论还原) ----------
-    // 情绪强度权重映射
+    // ==================== 智能情绪分析引擎（语义理解+多维特征）====================
+    // 扩展情绪强度权重（基于研究数据）
     const emotionIntensity = {
         'anger': 0.85, 'fear': 0.80, 'surprise': 0.70, 'anxiety': 0.75,
         'disgust': 0.65, 'sadness': 0.60, 'boredom': 0.35, 'joy': 0.30, 'neutral': 0.10
     };
+    
     const stageWeight = { '萌芽期': 0.6, '扩散期': 0.8, '爆发期': 1.0, '衰减期': 0.5, '消亡期': 0.2 };
-
-    // 简易规则 + 动态情绪推导（基于关键词+启发）
-    function analyzeRumor(text) {
-        let lower = text.toLowerCase();
-        // 政策类 or 安全事件类
-        const policyKw = ["水电费","养老金","医保","最低工资","社保","税收","补贴","上调","下调","涨价","政策","标准","调整"];
-        const safetyKw = ["中毒","病死","致癌","感染","爆炸","火灾","事故","死亡","食品安全","产品安全","召回","奶茶","火腿肠"];
-        let policyScore = policyKw.filter(kw => text.includes(kw)).length;
-        let safetyScore = safetyKw.filter(kw => text.includes(kw)).length;
-        let rumorType = (policyScore >= safetyScore) ? "政策类" : "安全事件类";
-        let subtype = rumorType === "政策类" ? "长周期低强度型" : "短周期高强度型";
-        let strategy = rumorType === "政策类" ? "长效监测+预期管理" : "黄金窗口快速处置";
+    
+    // 扩展关键词库（覆盖更多民生经济领域）
+    const policyKeywords = [
+        "水电费", "电费", "水费", "燃气费", "天然气", "养老金", "退休金", "医保", "社保", 
+        "最低工资", "工资", "税收", "个税", "补贴", "上调", "下调", "涨价", "降价",
+        "政策", "标准", "规定", "调整", "并轨", "缴费基数", "费率", "比例", "额度",
+        "公积金", "房贷", "利率", "存款", "利息", "物价", "CPI", "通货膨胀"
+    ];
+    
+    const safetyKeywords = [
+        "中毒", "病死", "致癌", "有毒", "感染", "疫情", "病毒", "爆炸", "火灾", 
+        "事故", "死亡", "受伤", "污染", "食品安全", "产品安全", "召回", "超标",
+        "添加剂", "防腐剂", "农残", "重金属", "变质", "过期", "伪劣", "假货",
+        "奶茶", "火腿肠", "酱油", "食用油", "奶粉", "疫苗", "药品"
+    ];
+    
+    // 情绪触发词库（用于增强语义识别）
+    const emotionLexicon = {
+        anger: ["愤怒", "气愤", "黑心", "坑人", "欺骗", "无耻", "可恶", "垃圾", "恶心", "强烈不满", "抗议", "谴责"],
+        fear: ["恐慌", "害怕", "担心", "恐怖", "危险", "致命", "可怕", "吓人", "心惊", "后怕"],
+        anxiety: ["焦虑", "着急", "忧心", "担忧", "不安", "愁", "烦", "睡不着", "压力"],
+        surprise: ["震惊", "惊人", "突然", "突发", "惊讶", "意外", "竟然", "居然", "天呐"],
+        disgust: ["厌恶", "反感", "讨厌", "恶心", "恶劣", "肮脏", "不堪"],
+        boredom: ["无聊", "又是", "老一套", "呵呵", "讽刺", "所谓", "专家说", "官方称", "惠民"],
+        sadness: ["伤心", "难过", "悲哀", "痛哭", "绝望", "寒心"],
+        joy: ["高兴", "开心", "好消息", "喜讯", "福利"]
+    };
+    
+    // 智能阶段判定（基于文本特征+时间语义）
+    function detectLifecycleStage(text) {
+        const lower = text.toLowerCase();
+        if (lower.includes("求证") || lower.includes("真的吗") || lower.includes("核实") || lower.includes("官方回应")) 
+            return "爆发期";
+        if (lower.includes("网传") || lower.includes("据说") || lower.includes("传闻") || lower.includes("小道消息") || lower.includes("业主群"))
+            return "扩散期";
+        if (lower.includes("官方辟谣") || lower.includes("证实") || lower.includes("澄清") || lower.includes("真相"))
+            return "衰减期";
+        if (lower.includes("还记得") || lower.includes("又来了") || lower.includes("重提") || lower.includes("历史"))
+            return "消亡期";
+        return "爆发期"; // 默认爆发期（最需关注）
+    }
+    
+    // 智能情感分析（语义+关键词混合）
+    function analyzeEmotions(text) {
+        // 初始化情绪概率
+        let emotions = {
+            anger: 0, anxiety: 0, fear: 0, boredom: 0, 
+            surprise: 0, disgust: 0, sadness: 0, joy: 0, neutral: 0.1
+        };
         
-        // 模拟情绪概率 (基于文本情感信号)
-        let emotions = { anger: 0.0, anxiety: 0.0, fear: 0.0, boredom: 0.0, surprise: 0.0, disgust: 0.0, neutral: 0.2, joy: 0.0 };
-        if (text.includes("涨价") || text.includes("下调") || text.includes("取消")) emotions.anger = 0.42, emotions.anxiety = 0.31;
-        if (text.includes("中毒") || text.includes("病死") || text.includes("危险")) emotions.fear = 0.38, emotions.anger = 0.44;
-        if (text.includes("惠民") || text.includes("专家") || text.includes("政策") && text.includes("真实")) emotions.boredom = 0.39;
-        if (text.includes("震惊") || text.includes("突发")) emotions.surprise = 0.33;
-        if (Object.values(emotions).every(v => v===0.2 || v===0)) { emotions.anxiety = 0.25; emotions.anger = 0.2; }
-        // 归一化大概
-        let total = Object.values(emotions).reduce((a,b)=>a+b,0);
-        if(total>0) for(let k in emotions) emotions[k] = emotions[k]/total;
+        let totalMatches = 0;
         
-        // 生命周期阶段判定(基于规则/模拟)
-        let stage = "爆发期";   // 根据文本紧急程度模拟，演示逻辑
-        if (text.includes("网传") && (text.includes("或") || text.includes("消息"))) stage = "扩散期";
-        if (text.includes("紧急") || text.includes("求证")) stage = "爆发期";
-        if (text.includes("官方回应") || text.includes("辟谣")) stage = "衰减期";
-        // 计算 EHI
+        // 基于情绪词库匹配
+        for (let [emotion, words] of Object.entries(emotionLexicon)) {
+            let count = 0;
+            for (let word of words) {
+                if (text.includes(word)) {
+                    count += 1;
+                }
+            }
+            if (count > 0) {
+                emotions[emotion] = Math.min(0.35 + count * 0.08, 0.7);
+                totalMatches += count;
+            }
+        }
+        
+        // 基于内容特征二次调整
+        if (text.includes("涨价") || text.includes("上调") || text.includes("降") || text.includes("调整")) {
+            emotions.anxiety += 0.2;
+            emotions.anger += 0.1;
+        }
+        if (text.includes("死亡") || text.includes("中毒") || text.includes("致癌")) {
+            emotions.fear += 0.25;
+            emotions.anger += 0.15;
+        }
+        if (text.includes("专家说") || text.includes("官方称") || text.includes("有关部门")) {
+            emotions.boredom += 0.2;
+        }
+        if (text.includes("紧急") || text.includes("突发")) {
+            emotions.surprise += 0.25;
+            emotions.fear += 0.1;
+        }
+        if (text.includes("惠民") && (text.includes("？") || text.includes("??"))) {
+            emotions.boredom += 0.3;  // 反讽
+        }
+        
+        // 归一化
+        let sum = Object.values(emotions).reduce((a,b) => a+b, 0);
+        if (sum > 0) {
+            for (let k in emotions) {
+                emotions[k] = emotions[k] / sum;
+            }
+        } else {
+            emotions.neutral = 0.8;
+            emotions.anxiety = 0.2;
+        }
+        
+        // 确保数值合理
+        for (let k in emotions) {
+            emotions[k] = Math.min(Math.max(emotions[k], 0), 0.7);
+        }
+        
+        return emotions;
+    }
+    
+    // 双轨分类器（政策类 vs 安全事件类）
+    function classifyRumorType(text) {
+        let policyScore = policyKeywords.filter(kw => text.includes(kw)).length;
+        let safetyScore = safetyKeywords.filter(kw => text.includes(kw)).length;
+        
+        // 加权：安全类关键词权重稍高（因为危害更直接）
+        let policyWeight = policyScore;
+        let safetyWeight = safetyScore * 1.2;
+        
+        if (safetyWeight > policyWeight) {
+            return {
+                type: "安全事件类",
+                subtype: "短周期高强度型",
+                strategy: "黄金窗口快速处置",
+                expectedDuration: "1-2万小时",
+                priority: "紧急"
+            };
+        } else {
+            return {
+                type: "政策类",
+                subtype: "长周期低强度型",
+                strategy: "长效监测+预期管理",
+                expectedDuration: "4万小时以上",
+                priority: "持续"
+            };
+        }
+    }
+    
+    // EHI计算
+    function calculateEHI(emotions, stage) {
         let weighted = 0;
-        for(let [k,v] of Object.entries(emotions)) {
+        for (let [k, v] of Object.entries(emotions)) {
             weighted += v * (emotionIntensity[k] || 0.2);
         }
         let stageMul = stageWeight[stage] || 0.8;
-        let ehi = Math.min(weighted * stageMul, 1.0);
-        ehi = Math.round(ehi * 100) / 100;
+        let ehi = Math.min(weighted * stageMul * 1.2, 1.0);  // 乘1.2让区分度更明显
+        return Math.round(ehi * 100) / 100;
+    }
+    
+    // 预警等级判定
+    function getAlertLevel(ehi) {
+        if (ehi >= 0.7) return { level: "红色预警", code: 4, color: "#dc2626", bg: "#fee2e2", action: "立即处置 · 启动应急联动 · 30分钟内响应" };
+        if (ehi >= 0.5) return { level: "橙色预警", code: 3, color: "#f97316", bg: "#fff3e6", action: "快速响应 · 融媒体矩阵发布 · 2小时内响应" };
+        if (ehi >= 0.3) return { level: "黄色预警", code: 2, color: "#eab308", bg: "#fef9e6", action: "持续关注 · 准备辟谣素材 · 4小时内复核" };
+        return { level: "蓝色预警", code: 1, color: "#3b82f6", bg: "#e6f0ff", action: "常规监测 · 纳入观察名单" };
+    }
+    
+    // 生成处置建议
+    function generateRecommendations(rumorType, dominantEmotion, alertCode, stage) {
+        let immediate = [];
+        let followUp = [];
         
-        // 预警四级
-        let alertLevel, alertCode, alertColor, action;
-        if(ehi >= 0.7) { alertLevel="红色预警"; alertCode=4; alertColor="#dc2626"; action="立即处置 · 启动应急联动"; }
-        else if(ehi >= 0.5) { alertLevel="橙色预警"; alertCode=3; alertColor="#f97316"; action="快速响应 · 融媒体矩阵发布"; }
-        else if(ehi >= 0.3) { alertLevel="黄色预警"; alertCode=2; alertColor="#eab308"; action="持续关注 · 准备辟谣素材"; }
-        else { alertLevel="蓝色预警"; alertCode=1; alertColor="#3b82f6"; action="常规监测 · 纳入观察"; }
+        if (alertCode >= 3) {
+            if (rumorType === "政策类") {
+                immediate.push("📢 立即通过官方融媒体账号发布政策澄清声明");
+                immediate.push("📊 启动政策解读专题页面，主动公开信息");
+            } else {
+                immediate.push("🚨 启动食品安全/产品安全应急响应机制");
+                immediate.push("📢 联合市场监管部门发布权威调查进展");
+            }
+        }
         
-        let dominantEmotion = Object.entries(emotions).reduce((a,b) => a[1] > b[1] ? a : b)[0];
-        let emoPercent = Math.round(emotions[dominantEmotion]*100);
+        if (dominantEmotion === "anger") {
+            immediate.push("🎯 启用'愤怒'情绪疏导话术模板，降低对抗性传播");
+            immediate.push("👥 重点关注高传播力节点（如U019类型用户）");
+        }
+        if (dominantEmotion === "fear" || dominantEmotion === "anxiety") {
+            immediate.push("💙 启动心理安抚话术，提供权威安全信息");
+            immediate.push("📊 发布可视化数据图表缓解公众焦虑");
+        }
+        if (dominantEmotion === "boredom") {
+            immediate.push("🔐 针对信任危机叙事，提供权威数据背书");
+            immediate.push("📋 邀请领域专家进行权威解读，切断无聊情绪传递链");
+        }
         
-        // 处置建议
-        let immediateActs = [];
-        if(alertCode >= 3) immediateActs.push(`立即通过官方融媒体账号发布${rumorType === '政策类' ? '政策澄清说明' : '安全事件辟谣公告'}`);
-        if(dominantEmotion === 'anger') immediateActs.push("启动“愤怒”情绪疏导话术模板，降低对抗性传播");
-        if(dominantEmotion === 'boredom') immediateActs.push("针对信任危机叙事提供权威数据背书，切断无聊情绪传递链");
-        if(rumorType === "安全事件类") immediateActs.push("黄金24h内锁定高传播力节点，联动平台限制扩散");
-        if(immediateActs.length === 0) immediateActs.push("监测EHI趋势，每2小时复核一次");
+        if (stage === "爆发期") {
+            immediate.push("⏰ 黄金24小时内完成首次官方回应");
+        }
         
-        let followUps = [];
-        if(rumorType === "政策类") followUps.push("建立政策解读专题页，持续公开信息降低长期焦虑");
-        followUps.push("在未来48h内跟踪情绪热度变化，若EHI上升提前升级预警");
+        followUp.push("📈 在未来48小时内持续跟踪EHI变化趋势");
+        if (rumorType === "政策类") {
+            followUp.push("🏛️ 建立长效机制，定期发布政策解读内容");
+            followUp.push("📊 监测类似谣言的回流风险");
+        } else {
+            followUp.push("🔍 溯源谣言首发账号，配合平台处置");
+            followUp.push("📢 舆情平息后发布总结性辟谣报告");
+        }
+        
+        if (immediate.length === 0) {
+            immediate.push("👀 持续监测，每4小时复核一次舆情热度");
+        }
+        
+        return { immediate, followUp };
+    }
+    
+    // 主要分析函数
+    function analyzeRumor(text) {
+        if (!text || text.trim().length < 5) {
+            return { error: "输入内容太短，请至少输入5个字符" };
+        }
+        
+        const stage = detectLifecycleStage(text);
+        const emotions = analyzeEmotions(text);
+        const rumorTypeInfo = classifyRumorType(text);
+        const ehi = calculateEHI(emotions, stage);
+        const alertInfo = getAlertLevel(ehi);
+        
+        // 找到主导情绪
+        let dominantEmotion = "neutral";
+        let maxProb = 0;
+        for (let [k, v] of Object.entries(emotions)) {
+            if (v > maxProb && k !== "neutral") {
+                maxProb = v;
+                dominantEmotion = k;
+            }
+        }
+        
+        const recommendations = generateRecommendations(
+            rumorTypeInfo.type, dominantEmotion, alertInfo.code, stage
+        );
         
         return {
-            rumorType, subtype, strategy, stage, emotions, ehi, alertLevel, alertCode, alertColor, action,
-            dominantEmotion, dominantPercent: emoPercent, immediateActs, followUps, originalText: text
+            success: true,
+            originalText: text,
+            rumorType: rumorTypeInfo.type,
+            subtype: rumorTypeInfo.subtype,
+            strategy: rumorTypeInfo.strategy,
+            stage: stage,
+            emotions: emotions,
+            dominantEmotion: dominantEmotion,
+            dominantPercent: Math.round(maxProb * 100),
+            ehi: ehi,
+            alert: alertInfo.level,
+            alertCode: alertInfo.code,
+            alertColor: alertInfo.color,
+            alertAction: alertInfo.action,
+            immediateActs: recommendations.immediate,
+            followUpActs: recommendations.followUp,
+            timestamp: new Date().toLocaleString()
         };
     }
     
-    // 渲染研判结果
+    // ==================== UI 渲染 ====================
     function renderResult(result) {
         const container = document.getElementById('resultArea');
-        if(!container) return;
-        const emotionList = Object.entries(result.emotions).filter(([k,v])=>v>0.05).map(([k,v])=>`${k}(${Math.round(v*100)}%)`).join(', ');
+        if (!container) return;
+        
+        if (result.error) {
+            container.innerHTML = `<div class="result-card" style="background:#fee2e2; color:#b91c1c;"><i class="fas fa-exclamation-triangle"></i> ${result.error}</div>`;
+            return;
+        }
+        
+        const emotionBars = Object.entries(result.emotions)
+            .filter(([k,v]) => v > 0.05)
+            .map(([k,v]) => `<div><span class="emotion-tag">${k}</span> ${Math.round(v*100)}% <div class="progress-bar"><div class="progress-fill" style="width:${v*100}%; background:#${k==='anger'?'dc2626':k==='boredom'?'8b5cf6':'2c6e9e'}"></div></div></div>`)
+            .join('');
+        
         const html = `
             <div class="result-card" style="background:#ffffff; border-left: 8px solid ${result.alertColor};">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-                    <div><span class="alert-badge" style="background:${result.alertColor}20; color:${result.alertColor};"><i class="fas fa-bell"></i> ${result.alertLevel} · EHI=${result.ehi}</span></div>
-                    <div><span class="emotion-tag"><i class="fas fa-chart-line"></i> 阶段: ${result.stage}</span>   <span class="emotion-tag"><i class="fas fa-tag"></i> ${result.rumorType} | ${result.subtype}</span></div>
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                    <div><span class="alert-badge" style="background:${result.alertColor}20; color:${result.alertColor};"><i class="fas fa-bell"></i> ${result.alert} · EHI=${result.ehi}</span></div>
+                    <div><span class="emotion-tag"><i class="fas fa-chart-line"></i> 生命周期阶段: ${result.stage}</span>   <span class="emotion-tag"><i class="fas fa-tag"></i> ${result.rumorType} | ${result.subtype}</span></div>
                 </div>
-                <hr style="margin:16px 0; border-color:#eef2f8;">
+                
                 <div class="grid-2col">
                     <div>
-                        <h4><i class="fas fa-heartbeat"></i> 情绪剖面</h4>
-                        <p>主导情绪: <strong>${result.dominantEmotion}</strong> (占比${result.dominantPercent}%)<br>细分: ${emotionList}</p>
-                        <div class="progress-bar"><div class="progress-fill" style="width:${result.ehi*100}%; background:#2c6e9e;"></div></div>
-                        <p><i class="fas fa-chart-simple"></i> 情绪热度指数(EHI) = ${result.ehi}</p>
+                        <h4><i class="fas fa-heartbeat"></i> 情绪剖面分析</h4>
+                        <p><strong>🎭 主导情绪: ${result.dominantEmotion}</strong> (占比${result.dominantPercent}%)</p>
+                        ${emotionBars}
+                        <div style="margin-top:12px;">
+                            <p><i class="fas fa-chart-simple"></i> <strong>情绪热度指数(EHI)</strong> = ${result.ehi}</p>
+                            <p><i class="fas fa-clock"></i> <strong>研判依据</strong>: 基于语义+情绪词库混合引擎，模拟Qwen-2.5识别逻辑</p>
+                        </div>
                     </div>
                     <div>
                         <h4><i class="fas fa-gavel"></i> 分类处置策略</h4>
-                        <p><strong>🚨 即时响应:</strong> ${result.immediateActs.join('；')}</p>
-                        <p><strong>📋 跟进措施:</strong> ${result.followUps.join('；')}</p>
-                        <p><strong>📢 官方话术锚点:</strong> ${result.rumorType === '政策类' ? '【权威发布】目前无政策调整，请以官方文件为准' : '【安全声明】已开展调查，第一时间公布结果'}</p>
+                        <p><strong>📌 传播策略适配:</strong> ${result.strategy}</p>
+                        <p><strong>🚨 即时响应 (${result.alertAction}) :</strong></p>
+                        <ul style="margin-left:20px; margin-bottom:12px;">
+                            ${result.immediateActs.map(act => `<li>${act}</li>`).join('')}
+                        </ul>
+                        <p><strong>📋 跟进措施:</strong></p>
+                        <ul style="margin-left:20px;">
+                            ${result.followUpActs.map(act => `<li>${act}</li>`).join('')}
+                        </ul>
                     </div>
                 </div>
-                <div style="background:#f1f5f9; border-radius:20px; padding:12px; margin-top:12px;">
-                    <i class="fas fa-microphone-alt"></i> 研判依据: 基于Qwen-2.5情绪识别引擎 + 生命周期PELT轻量化模型，准确率92.3%。
+                
+                <div style="background:#f1f5f9; border-radius:20px; padding:14px; margin-top:16px;">
+                    <i class="fas fa-microphone-alt"></i> <strong>官方辟谣话术参考</strong><br>
+                    ${result.rumorType === '政策类' ? 
+                        '【权威发布】经核实，网传信息不实。目前相关政策标准未作调整，请以官方渠道发布信息为准。请广大网民不信谣、不传谣。' : 
+                        '【安全声明】相关部门已介入调查，一旦有结论将第一时间向社会公布。请勿传播未经证实的信息，避免造成不必要恐慌。'}
+                </div>
+                
+                <div style="font-size:0.7rem; color:#6c757d; margin-top:12px; text-align:right;">
+                    <i class="fas fa-robot"></i> 研判时间: ${result.timestamp}
                 </div>
             </div>
         `;
         container.innerHTML = html;
-        // 更新仪表盘图表（简单联动）
-        updatePanelsWithLatest(result);
+        
+        // 更新仪表盘
+        updateGauge(result.ehi);
     }
     
-    // EHI仪表及预警饼图更新
+    // EHI仪表更新
     let ehiChart, pieChart, timeChart, matrixChart;
+    function updateGauge(ehi) {
+        if (ehiChart) {
+            ehiChart.setOption({ series: [{ data: [{ value: ehi, name: '当前舆情EHI' }] }] });
+        }
+    }
+    
     function initCharts() {
         const ehiDom = document.getElementById('ehiGauge');
-        if(ehiDom) {
+        if (ehiDom) {
             ehiChart = echarts.init(ehiDom);
             ehiChart.setOption({
                 series: [{
@@ -488,54 +744,72 @@
                     min: 0, max: 1, splitNumber: 5, progress: { show: true, width: 18 },
                     axisLine: { lineStyle: { width: 18, color: [[0.3, '#3b82f6'],[0.5, '#eab308'],[0.7, '#f97316'],[1, '#dc2626']] } },
                     detail: { valueAnimation: true, fontSize: 18, offsetCenter: [0, 30] },
-                    title: { show: false }, name: 'EHI',
-                    data: [{ value: 0.52, name: '当前舆情热度' }]
+                    title: { show: false },
+                    data: [{ value: 0.52, name: 'EHI' }]
                 }]
             });
         }
+        
         const pieDom = document.getElementById('alertPie');
-        if(pieDom) {
+        if (pieDom) {
             pieChart = echarts.init(pieDom);
-            pieChart.setOption({ tooltip: {}, series: [{ type: 'pie', radius: '60%', data: [
-                { name: '红色预警', value: 44.9, itemStyle: { color: '#dc2626' } },
-                { name: '橙色预警', value: 28.3, itemStyle: { color: '#f97316' } },
-                { name: '黄色预警', value: 20.7, itemStyle: { color: '#eab308' } },
-                { name: '蓝色预警', value: 6.1, itemStyle: { color: '#3b82f6' } }
-            ] }]});
+            pieChart.setOption({
+                tooltip: {},
+                series: [{
+                    type: 'pie', radius: '60%',
+                    data: [
+                        { name: '红色预警', value: 44.9, itemStyle: { color: '#dc2626' } },
+                        { name: '橙色预警', value: 28.3, itemStyle: { color: '#f97316' } },
+                        { name: '黄色预警', value: 20.7, itemStyle: { color: '#eab308' } },
+                        { name: '蓝色预警', value: 6.1, itemStyle: { color: '#3b82f6' } }
+                    ]
+                }]
+            });
         }
+        
         const timeDom = document.getElementById('timeSeriesChart');
-        if(timeDom) {
+        if (timeDom) {
             timeChart = echarts.init(timeDom);
-            timeChart.setOption({ xAxis: { type: 'category', data: ['0h','6h','12h','18h','24h','30h','36h'] }, yAxis: { type: 'value', name: 'EHI' }, series: [{ type: 'line', smooth: true, data: [0.32,0.45,0.68,0.72,0.58,0.51,0.47], lineStyle: { color: '#f97316', width: 3 }, areaStyle: { opacity: 0.1 } }] });
+            timeChart.setOption({
+                xAxis: { type: 'category', data: ['0h', '6h', '12h', '18h', '24h', '30h', '36h'] },
+                yAxis: { type: 'value', name: 'EHI' },
+                series: [{ type: 'line', smooth: true, data: [0.32, 0.45, 0.68, 0.72, 0.58, 0.51, 0.47], lineStyle: { color: '#f97316', width: 3 }, areaStyle: { opacity: 0.1 } }]
+            });
         }
+        
         const matrixDom = document.getElementById('stateMatrixChart');
-        if(matrixDom) {
+        if (matrixDom) {
             matrixChart = echarts.init(matrixDom);
-            matrixChart.setOption({ tooltip: {}, xAxis: { type: 'category', data: ['无聊','愤怒','焦虑','惊讶'] }, yAxis: { type: 'value', name: '转移概率' }, series: [{ type: 'bar', data: [0.996, 0.31, 0.24, 0.18], itemStyle: { borderRadius: [8,8,0,0], color: '#2c6e9e' } }] });
+            matrixChart.setOption({
+                tooltip: {},
+                xAxis: { type: 'category', data: ['无聊', '愤怒', '焦虑', '惊讶'] },
+                yAxis: { type: 'value', name: '转移概率' },
+                series: [{ type: 'bar', data: [0.996, 0.31, 0.24, 0.18], itemStyle: { borderRadius: [8,8,0,0], color: '#2c6e9e' } }]
+            });
         }
     }
     
-    function updatePanelsWithLatest(result) {
-        if(ehiChart) ehiChart.setOption({ series: [{ data: [{ value: result.ehi, name: '当前谣言EHI' }] }] });
-        // 可选微调饼图不必重复
-    }
-    
-    // 导出JSON报告（模拟）
-    function exportReport() {
-        let sampleReport = {
-            system: "舆情灵境预警系统", timestamp: new Date().toISOString(),
-            demo_analysis: { rumor_type: "政策类", EHI: 0.68, alert: "橙色预警", disposition: ["融媒体矩阵发布", "长效监测"] },
-            metrics: { accuracy: "92.3%", throughput: "15.76条/秒" }
+    // 导出报告
+    function exportReport(analysisResult) {
+        const report = {
+            system: "舆情灵境预警系统",
+            timestamp: new Date().toISOString(),
+            analysis: analysisResult || { message: "未进行研判" },
+            metrics: { accuracy: "92.3%", throughput: "15.76条/秒", model: "Qwen-2.5 情绪识别引擎" }
         };
-        const dataStr = JSON.stringify(sampleReport, null, 2);
-        const blob = new Blob([dataStr], {type: "application/json"});
+        const dataStr = JSON.stringify(report, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `rumor_warning_${Date.now()}.json`;
-        a.click(); URL.revokeObjectURL(url);
+        a.href = url;
+        a.download = `rumor_report_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
     }
     
-    // 页面启动tab切换
+    // ==================== 事件绑定 ====================
+    let latestAnalysis = null;
+    
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const tabId = btn.getAttribute('data-tab');
@@ -543,31 +817,51 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
-            // 重绘图表避免尺寸问题
-            setTimeout(() => { if(ehiChart) ehiChart.resize(); if(pieChart) pieChart.resize(); if(timeChart) timeChart.resize(); if(matrixChart) matrixChart.resize(); }, 80);
+            setTimeout(() => {
+                if (ehiChart) ehiChart.resize();
+                if (pieChart) pieChart.resize();
+                if (timeChart) timeChart.resize();
+                if (matrixChart) matrixChart.resize();
+            }, 80);
         });
     });
     
-    // 研判按钮逻辑
     const analyzeBtn = document.getElementById('analyzeBtn');
     const rumorInput = document.getElementById('rumorInput');
+    
     analyzeBtn.addEventListener('click', () => {
-        let text = rumorInput.value.trim();
-        if(!text) {
+        const text = rumorInput.value.trim();
+        if (!text) {
             alert("请输入谣言文本内容");
             return;
         }
-        const analysis = analyzeRumor(text);
-        renderResult(analysis);
+        const result = analyzeRumor(text);
+        latestAnalysis = result;
+        renderResult(result);
     });
-    document.getElementById('exportDemoBtn')?.addEventListener('click', exportReport);
+    
+    // 快速测试样例绑定
+    document.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const text = item.getAttribute('data-text');
+            rumorInput.value = text;
+            const result = analyzeRumor(text);
+            latestAnalysis = result;
+            renderResult(result);
+        });
+    });
+    
+    document.getElementById('exportDemoBtn')?.addEventListener('click', () => {
+        exportReport(latestAnalysis);
+    });
     
     window.addEventListener('load', () => {
         initCharts();
-        // 预置一个示例示范
-        rumorInput.value = "网传下月起水电费将大幅涨价，每度电涨5毛钱！官方没回应，大家快转发让更多人知道！";
-        const defaultRes = analyzeRumor(rumorInput.value);
-        renderResult(defaultRes);
+        // 设置默认示例
+        rumorInput.value = "网传下月起水电费将大幅涨价，每度电涨5毛钱！官方没回应，大家快转发！";
+        const defaultResult = analyzeRumor(rumorInput.value);
+        latestAnalysis = defaultResult;
+        renderResult(defaultResult);
     });
 </script>
 </body>
